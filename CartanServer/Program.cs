@@ -1,7 +1,7 @@
-﻿using CartanServer.Core;
+﻿using Cartan.Server;
 using System.Net;
 
-namespace CartanServer
+namespace Cartan
 {
     class Program
     {
@@ -9,7 +9,6 @@ namespace CartanServer
         {
             CartanTcpServer s = new CartanTcpServer(new IPEndPoint( IPAddress.Parse("127.0.0.1"),123));
             s.Start();
-            //
         }
     }
 }

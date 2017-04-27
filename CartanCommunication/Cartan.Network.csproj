@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8A4E6A49-7CBC-4C46-8E9E-42D8DAEE9C64}</ProjectGuid>
+    <ProjectGuid>{E1B4FF45-B346-43E0-BA82-2498641D7937}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CartanServer.Core</RootNamespace>
-    <AssemblyName>CartanServer.Core</AssemblyName>
+    <RootNamespace>Cartan.Network</RootNamespace>
+    <AssemblyName>Cartan.Network</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,12 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CartanTcpClientThread.cs" />
-    <Compile Include="CartanTcpServer.cs" />
+    <Compile Include="NetworkClientMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Events\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CartanServer.Core
+namespace Cartan.Server
 {
     public class CartanTcpServer
     {

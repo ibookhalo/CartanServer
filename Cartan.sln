@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartanServer", "CartanServer\CartanServer.csproj", "{894FF4DB-6717-478B-9049-6CF6358D2E01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cartan", "CartanServer\Cartan.csproj", "{894FF4DB-6717-478B-9049-6CF6358D2E01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartanServer.Core", "CartanServer.Core\CartanServer.Core.csproj", "{8A4E6A49-7CBC-4C46-8E9E-42D8DAEE9C64}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cartan.Server", "CartanServer.Core\Cartan.Server.csproj", "{8A4E6A49-7CBC-4C46-8E9E-42D8DAEE9C64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartanCommunication", "CartanCommunication\CartanCommunication.csproj", "{E1B4FF45-B346-43E0-BA82-2498641D7937}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cartan.Network", "CartanCommunication\Cartan.Network.csproj", "{E1B4FF45-B346-43E0-BA82-2498641D7937}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
