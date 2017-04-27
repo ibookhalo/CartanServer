@@ -16,8 +16,8 @@ namespace Cartan.Network
     public class CartanTcpListener
     {
         /*########################################    Delegates    ####################################*/
-        public delegate void CartanClientConnectedHandler(object tcpListener, CartanClientReceivedMessageEventArgs clientArgs);
-        public delegate void ReceivedMessageHandler(object tcpListener, CartanClientReceivedMessageEventArgs receivedMessage);
+        public delegate void CartanClientConnectedHandler(object tcpListener, ReceivedMessageEventArgs clientArgs);
+        public delegate void ReceivedMessageHandler(object tcpListener, ReceivedMessageEventArgs receivedMessage);
         /*##############################################################################################*/
         public event CartanClientConnectedHandler CartanClientConnected;
         public event ReceivedMessageHandler ReceivedMessage;
@@ -69,7 +69,7 @@ namespace Cartan.Network
                 if (authMessage != null && authMessage.Password.Equals(authPassword))
                 {
                     CartanClient cartanClient = new CartanClient(result.Value, authMessage.Playername);
-                    CartanClientConnected?.Invoke(tcpListener, new CartanClientReceivedMessageEventArgs(cartanClient, authMessage));
+                    CartanClientConnected?.Invoke(tcpListener, new ReceivedMessageEventArgs(cartanClient, authMessage));
 
 
                     byte[] buffer = new byte[NetworkMessage.MAX_DATA_SIZE_IN_BYTES];
@@ -96,7 +96,7 @@ namespace Cartan.Network
                 NetworkMessage message = new NetworkMessageFormatter<NetworkMessage>().Deserialize(result.Key as byte[]);
                 if (message != null)
                 {
-                    ReceivedMessage?.Invoke(tcpListener, new CartanClientReceivedMessageEventArgs(result.Value, message));
+                    ReceivedMessage?.Invoke(tcpListener, new ReceivedMessageEventArgs(result.Value, message));
                 }
             }
             catch (Exception ex)

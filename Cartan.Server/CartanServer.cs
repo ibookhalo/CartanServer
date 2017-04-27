@@ -28,12 +28,12 @@ namespace Cartan.Server
             cartanListener.Start();
         }
 
-        private void ReceivedMessage(object tcpListener, Network.Events.CartanClientReceivedMessageEventArgs receivedMessage)
+        private void ReceivedMessage(object tcpListener, Network.Events.ReceivedMessageEventArgs receivedMessage)
         {
             
         }
 
-        private void CartanListener_CartanClientConnected(object tcpListener, Network.Events.CartanClientReceivedMessageEventArgs clientArgs)
+        private void CartanListener_CartanClientConnected(object tcpListener, Network.Events.ReceivedMessageEventArgs clientArgs)
         {
             cartanClients.Add(clientArgs.CartanClient);
 

@@ -43,7 +43,7 @@
     <Compile Include="CartanClient.cs" />
     <Compile Include="Messaging\ClientMessages\CartanClientAuthenticationMessage.cs" />
     <Compile Include="CartanTcpListener.cs" />
-    <Compile Include="Events\CartanClientReceivedMessageEventArgs.cs" />
+    <Compile Include="Events\ReceivedMessageEventArgs.cs" />
     <Compile Include="Messaging\NetworkMessage.cs" />
     <Compile Include="Messaging\NetworkMessageFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
