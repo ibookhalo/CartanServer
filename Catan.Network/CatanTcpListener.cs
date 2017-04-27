@@ -1,6 +1,6 @@
-﻿using Cartan.Network.Events;
-using Cartan.Network.Messaging;
-using Cartan.Network.Messaging.ClientMessages;
+﻿using Catan.Network.Events;
+using Catan.Network.Messaging;
+using Catan.Network.Messaging.ClientMessages;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,9 +11,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cartan.Network
+namespace Catan.Network
 {
-    public class CartanTcpListener
+    public class CatanTcpListener
     {
         /*########################################    Delegates    ####################################*/
         public delegate void CartanClientConnectedHandler(object tcpListener, ReceivedMessageEventArgs clientArgs);
@@ -26,7 +26,7 @@ namespace Cartan.Network
         public bool IsListening { private set; get; }
         private TcpListener tcpListener;
 
-        public CartanTcpListener(string authPassword)
+        public CatanTcpListener(string authPassword)
         {
             this.authPassword = authPassword;
         }
@@ -44,7 +44,7 @@ namespace Cartan.Network
                     NetworkStream netStream = tcpClient.GetStream();
                     if (netStream.CanRead)
                     {
-                        byte[] buffer = new byte[new CartanClientAuthenticationMessage().MaxDataSizeInBytes];
+                        byte[] buffer = new byte[new CatanClientAuthenticationMessage().MaxDataSizeInBytes];
                         netStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(clienAuthenticationBeginReadCallback), new KeyValuePair<byte[], TcpClient>(buffer, tcpClient));
                     }
                 }
@@ -65,15 +65,15 @@ namespace Cartan.Network
                 KeyValuePair<byte[], TcpClient> result = (KeyValuePair<byte[], TcpClient>)ar.AsyncState;
                 result.Value.GetStream().EndRead(ar);
 
-                CartanClientAuthenticationMessage authMessage = new NetworkMessageFormatter<CartanClientAuthenticationMessage>().Deserialize(result.Key as byte[]);
+                CatanClientAuthenticationMessage authMessage = new NetworkMessageFormatter<CatanClientAuthenticationMessage>().Deserialize(result.Key as byte[]);
                 if (authMessage != null && authMessage.Password.Equals(authPassword))
                 {
-                    CartanClient cartanClient = new CartanClient(result.Value, authMessage.Playername);
+                    CatanClient cartanClient = new CatanClient(result.Value, authMessage.Playername);
                     CartanClientConnected?.Invoke(tcpListener, new ReceivedMessageEventArgs(cartanClient, authMessage));
 
 
                     byte[] buffer = new byte[NetworkMessage.MAX_DATA_SIZE_IN_BYTES];
-                    result.Value.GetStream().BeginRead(buffer, 0, buffer.Length, clientReceivedMessageBeginReadCallback, new KeyValuePair<byte[], CartanClient>(buffer, cartanClient));
+                    result.Value.GetStream().BeginRead(buffer, 0, buffer.Length, clientReceivedMessageBeginReadCallback, new KeyValuePair<byte[], CatanClient>(buffer, cartanClient));
                 }
                 else
                 {
@@ -90,7 +90,7 @@ namespace Cartan.Network
         {
             try
             {
-                KeyValuePair<byte[], CartanClient> result = (KeyValuePair<byte[], CartanClient>)ar.AsyncState;
+                KeyValuePair<byte[], CatanClient> result = (KeyValuePair<byte[], CatanClient>)ar.AsyncState;
                 result.Value.TcpClient.GetStream().EndRead(ar);
 
                 NetworkMessage message = new NetworkMessageFormatter<NetworkMessage>().Deserialize(result.Key as byte[]);

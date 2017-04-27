@@ -6,15 +6,15 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cartan.Network
+namespace Catan.Network
 {
-    public class CartanClient
+    public class CatanClient
     {
         public TcpClient TcpClient { private set; get; }
         public IPEndPoint IPAddress { private set; get; }
         public string PlayerName { private set; get; }
 
-        public CartanClient(TcpClient tcpClient, string playerName)
+        public CatanClient(TcpClient tcpClient, string playerName)
         {
             this.TcpClient = tcpClient;
             this.IPAddress= ((IPEndPoint)tcpClient.Client.RemoteEndPoint);

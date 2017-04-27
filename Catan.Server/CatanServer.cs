@@ -1,4 +1,4 @@
-﻿using Cartan.Network;
+﻿using Catan.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,18 +6,18 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cartan.Server
+namespace Catan.Server
 {
-    public class CartanServer
+    public class CatanServer
     {
-        private CartanTcpListener cartanListener;
-        private List<CartanClient> cartanClients;
+        private CatanTcpListener cartanListener;
+        private List<CatanClient> cartanClients;
         private ushort playerCount;
 
-        public CartanServer(ushort playerCount, string authPassword)
+        public CatanServer(ushort playerCount, string authPassword)
         {
-            this.cartanListener = new CartanTcpListener(authPassword);
-            this.cartanClients = new List<CartanClient>();
+            this.cartanListener = new CatanTcpListener(authPassword);
+            this.cartanClients = new List<CatanClient>();
             this.playerCount = playerCount;
         }
 
@@ -40,7 +40,7 @@ namespace Cartan.Server
             if (cartanClients.Count + 1 >= playerCount)
                 cartanListener.Stop();
 
-            Console.WriteLine($"Cartan: {clientArgs.CartanClient.PlayerName} connected. Message = {clientArgs.Message}");
+            Console.WriteLine($"Catan: {clientArgs.CartanClient.PlayerName} connected. Message = {clientArgs.Message}");
         }
 
     }

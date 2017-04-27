@@ -1,5 +1,5 @@
 ﻿
-using Cartan.Network.Messaging;
+using Catan.Network.Messaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cartan.Network.Messaging
+namespace Catan.Network.Messaging
 {
     public class NetworkMessageFormatter<T> where T: NetworkMessage
     {

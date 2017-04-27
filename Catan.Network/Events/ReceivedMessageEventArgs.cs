@@ -1,19 +1,19 @@
 ﻿
-using Cartan.Network.Messaging;
+using Catan.Network.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cartan.Network.Events
+namespace Catan.Network.Events
 {
     public class ReceivedMessageEventArgs:EventArgs
     {
-        public CartanClient CartanClient { private set; get; }
+        public CatanClient CartanClient { private set; get; }
         public NetworkMessage Message { private set; get; }
 
-        public ReceivedMessageEventArgs(CartanClient client, NetworkMessage message)
+        public ReceivedMessageEventArgs(CatanClient client, NetworkMessage message)
         {
             this.CartanClient = client;
             this.Message = message;

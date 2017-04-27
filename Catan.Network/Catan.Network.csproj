@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{894FF4DB-6717-478B-9049-6CF6358D2E01}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{E1B4FF45-B346-43E0-BA82-2498641D7937}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cartan</RootNamespace>
-    <AssemblyName>Cartan</AssemblyName>
+    <RootNamespace>Cartan.Network</RootNamespace>
+    <AssemblyName>Cartan.Network</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,17 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="CatanClient.cs" />
+    <Compile Include="Messaging\ClientMessages\CatanClientAuthenticationMessage.cs" />
+    <Compile Include="CatanTcpListener.cs" />
+    <Compile Include="Events\ReceivedMessageEventArgs.cs" />
+    <Compile Include="Messaging\NetworkMessage.cs" />
+    <Compile Include="Messaging\NetworkMessageFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Cartan.Server\Cartan.Server.csproj">
-      <Project>{8a4e6a49-7cbc-4c46-8e9e-42d8daee9c64}</Project>
-      <Name>Cartan.Server</Name>
-    </ProjectReference>
+    <Folder Include="Messaging\ServerMessages\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

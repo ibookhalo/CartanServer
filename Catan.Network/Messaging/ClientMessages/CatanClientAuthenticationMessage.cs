@@ -4,21 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cartan.Network.Messaging.ClientMessages
+namespace Catan.Network.Messaging.ClientMessages
 {
-    class CartanClientAuthenticationMessage : NetworkMessage
+    class CatanClientAuthenticationMessage : NetworkMessage
     {
 
         public string Password { get; private set; }
         public string Playername { get; private set; }
 
-        public CartanClientAuthenticationMessage(string password, string playerName)
+        public CatanClientAuthenticationMessage(string password, string playerName)
         {
             this.Password = Password;
             this.Playername = playerName;
         }
 
-        public CartanClientAuthenticationMessage()
+        public CatanClientAuthenticationMessage()
         {
         }
 
