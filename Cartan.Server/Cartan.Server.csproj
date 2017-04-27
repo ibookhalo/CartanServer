@@ -40,12 +40,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CartanTcpClientThread.cs" />
-    <Compile Include="CartanTcpServer.cs" />
+    <Compile Include="CartanServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Events\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cartan.Network\Cartan.Network.csproj">
+      <Project>{e1b4ff45-b346-43e0-ba82-2498641d7937}</Project>
+      <Name>Cartan.Network</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

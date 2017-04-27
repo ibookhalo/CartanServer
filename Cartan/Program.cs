@@ -1,4 +1,5 @@
 ﻿using Cartan.Server;
+using System;
 using System.Net;
 
 namespace Cartan
@@ -7,8 +8,9 @@ namespace Cartan
     {
         static void Main(string[] args)
         {
-            CartanTcpServer s = new CartanTcpServer(new IPEndPoint( IPAddress.Parse("127.0.0.1"),123));
-            s.Start();
+            CartanServer ser = new CartanServer(2, authPassword:"ibo");
+            ser.Run();
+            Console.Read();
         }
     }
 }
