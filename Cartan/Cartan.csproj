@@ -50,7 +50,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CartanServer.Core\Cartan.Server.csproj">
+    <ProjectReference Include="..\Cartan.Server\Cartan.Server.csproj">
       <Project>{8a4e6a49-7cbc-4c46-8e9e-42d8daee9c64}</Project>
       <Name>Cartan.Server</Name>
     </ProjectReference>
