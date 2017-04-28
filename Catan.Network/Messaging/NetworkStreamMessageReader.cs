@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Cartan.Network.Messaging
 {
-    public class CatanNetworkMessageStreamReader
+    public class NetworkMessageStreamReader
     {
         public TcpClient TcpClient { private set; get; }
         private NetworkStream netStream;
@@ -20,7 +20,7 @@ namespace Cartan.Network.Messaging
         public event ReadCompletedHandler ReadCompleted;
         public event ReadErrorHandler ReadError;
 
-        public CatanNetworkMessageStreamReader(TcpClient tcpClient)
+        public NetworkMessageStreamReader(TcpClient tcpClient)
         {
             this.TcpClient = tcpClient;
         }
@@ -29,7 +29,7 @@ namespace Cartan.Network.Messaging
         {
             try
             {
-                byte[] buffer = new byte[NetworkMessage.MAX_DATA_SIZE_IN_BYTES];
+                byte[] buffer = new byte[TcpClient.ReceiveBufferSize = NetworkMessage.MAX_DATA_SIZE_IN_BYTES];
                 netStream = TcpClient.GetStream();
                 netStream.BeginRead(buffer, 0, buffer.Length, readCallback,buffer);
             }

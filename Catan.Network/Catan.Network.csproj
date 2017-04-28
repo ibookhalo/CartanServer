@@ -7,8 +7,8 @@
     <ProjectGuid>{E1B4FF45-B346-43E0-BA82-2498641D7937}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cartan.Network</RootNamespace>
-    <AssemblyName>Cartan.Network</AssemblyName>
+    <RootNamespace>Catan.Network</RootNamespace>
+    <AssemblyName>Catan.Network</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,6 +44,8 @@
     <Compile Include="Events\CatanClientConnectedEventArgs.cs" />
     <Compile Include="Events\NetworkMessageReadCompletedEventArgs.cs" />
     <Compile Include="Events\NetworkMessageReadErrorEventArgs.cs" />
+    <Compile Include="Events\NetworkMessageSendCompletedEventArgs.cs" />
+    <Compile Include="Events\NetworkMessageSendErrorEventArgs.cs" />
     <Compile Include="Messaging\ClientMessages\CatanClientAuthenticationMessage.cs" />
     <Compile Include="CatanTcpListener.cs" />
     <Compile Include="Messaging\NetworkMessage.cs" />

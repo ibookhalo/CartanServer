@@ -41,7 +41,7 @@ namespace Catan.Network
                 try
                 {
                     tcpListener.Start();
-                    var netMessageStreamReader = new CatanNetworkMessageStreamReader(tcpListener.AcceptTcpClient());
+                    var netMessageStreamReader = new NetworkMessageStreamReader(tcpListener.AcceptTcpClient());
                     netMessageStreamReader.ReadCompleted += authMessageRead;
                     netMessageStreamReader.ReadError += authMessageReadError;
                     netMessageStreamReader.ReadAsync();

@@ -7,8 +7,8 @@
     <ProjectGuid>{8A4E6A49-7CBC-4C46-8E9E-42D8DAEE9C64}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cartan.Server</RootNamespace>
-    <AssemblyName>Cartan.Server</AssemblyName>
+    <RootNamespace>Catan.Server</RootNamespace>
+    <AssemblyName>Catan.Server</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

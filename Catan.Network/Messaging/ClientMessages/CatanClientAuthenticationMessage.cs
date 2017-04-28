@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Catan.Network.Messaging.ClientMessages
 {
-    class CatanClientAuthenticationMessage : NetworkMessage
+    [Serializable]
+    public class CatanClientAuthenticationMessage : NetworkMessage
     {
 
         public string Password { get; private set; }
@@ -14,7 +15,7 @@ namespace Catan.Network.Messaging.ClientMessages
 
         public CatanClientAuthenticationMessage(string password, string playerName)
         {
-            this.Password = Password;
+            this.Password = password;
             this.Playername = playerName;
         }
 
