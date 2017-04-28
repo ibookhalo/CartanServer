@@ -18,16 +18,5 @@ namespace Catan.Network.Messaging.ClientMessages
             this.Playername = playerName;
         }
 
-        public CatanClientAuthenticationMessage()
-        {
-        }
-
-        public override ushort MaxDataSizeInBytes
-        {
-            get
-            {
-                return 1024;
-            }
-        }
     }
 }

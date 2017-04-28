@@ -10,6 +10,5 @@ namespace Catan.Network.Messaging
     public abstract class  NetworkMessage
     {
         public static uint MAX_DATA_SIZE_IN_BYTES = 5 * 1024;
-        public abstract ushort MaxDataSizeInBytes { get; }
     }
 }

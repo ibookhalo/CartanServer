@@ -41,11 +41,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CatanClient.cs" />
+    <Compile Include="Events\ReadCompletedEventArgs.cs" />
     <Compile Include="Messaging\ClientMessages\CatanClientAuthenticationMessage.cs" />
     <Compile Include="CatanTcpListener.cs" />
     <Compile Include="Events\ReceivedMessageEventArgs.cs" />
     <Compile Include="Messaging\NetworkMessage.cs" />
     <Compile Include="Messaging\NetworkMessageFormatter.cs" />
+    <Compile Include="NetworkStreamReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using Catan.Network.Events;
+﻿using Cartan.Network;
+using Catan.Network.Events;
 using Catan.Network.Messaging;
 using Catan.Network.Messaging.ClientMessages;
 using System;
@@ -39,14 +40,11 @@ namespace Catan.Network
             {
                 try
                 {
-                    this.tcpListener.Start();
-                    TcpClient tcpClient = this.tcpListener.AcceptTcpClient();
-                    NetworkStream netStream = tcpClient.GetStream();
-                    if (netStream.CanRead)
-                    {
-                        byte[] buffer = new byte[new CatanClientAuthenticationMessage().MaxDataSizeInBytes];
-                        netStream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(clienAuthenticationBeginReadCallback), new KeyValuePair<byte[], TcpClient>(buffer, tcpClient));
-                    }
+                    tcpListener.Start();
+                    var netStreamReader = new NetworkStreamReader(tcpListener.AcceptTcpClient());
+                    netStreamReader.ReadCompleted += CatanTcpListener_ReadCompleted;
+                    netStreamReader.ReadAsync();
+                    
                 }
                 catch (Exception ex)
                 {
@@ -55,7 +53,31 @@ namespace Catan.Network
                     
             }
             tcpListener.Stop();
-           
+        }
+
+        private void CatanTcpListener_ReadCompleted(object netStreamReader, Cartan.Network.Events.ReadCompletedEventArgs readCompletedEventArgs)
+        {
+            try
+            {
+                CatanClientAuthenticationMessage authMessage = new NetworkMessageFormatter<CatanClientAuthenticationMessage>().Deserialize(readCompletedEventArgs.Data);
+                if (authMessage != null && authMessage.Password.Equals(authPassword))
+                {
+                    CatanClient cartanClient = new CatanClient(readCompletedEventArgs.TcpClient, authMessage.Playername);
+                    CartanClientConnected?.Invoke(tcpListener, new ReceivedMessageEventArgs(cartanClient, authMessage));
+
+                    // todo
+                    byte[] buffer = new byte[NetworkMessage.MAX_DATA_SIZE_IN_BYTES];
+                    result.Value.GetStream().BeginRead(buffer, 0, buffer.Length, clientReceivedMessageBeginReadCallback, new KeyValuePair<byte[], CatanClient>(buffer, cartanClient));
+                }
+                else
+                {
+                    result.Value.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         private void clienAuthenticationBeginReadCallback(IAsyncResult ar)
