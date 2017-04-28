@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,38 +11,34 @@ namespace Catan.Server
 {
     public class CatanServer
     {
-        private CatanTcpListener cartanListener;
-        private List<CatanClient> cartanClients;
-        private ushort playerCount;
+        private CatanTcpListener catanListener;
+        private List<CatanClient> catanClients;
+        private ushort maxPlayerCount;
 
-        public CatanServer(ushort playerCount, string authPassword)
+        public CatanServer(ushort playerCount,IPEndPoint ipEndPoint,string authPassword)
         {
-            this.cartanListener = new CatanTcpListener(authPassword);
-            this.cartanClients = new List<CatanClient>();
-            this.playerCount = playerCount;
+            this.catanListener = new CatanTcpListener(ipEndPoint, authPassword);
+            this.catanClients = new List<CatanClient>();
+            this.maxPlayerCount = playerCount;
         }
 
-        public void Run()
+        public void Start()
         {
-            cartanListener.CartanClientConnected += CartanListener_CartanClientConnected;
-            cartanListener.ReceivedMessage += ReceivedMessage;
-            cartanListener.Start();
+            catanListener.CatanClientConnected += CatanListener_CatanClientConnected; ;
+            catanListener.Start();
         }
 
-        private void ReceivedMessage(object tcpListener, Network.Events.ReceivedMessageEventArgs receivedMessage)
+        private void CatanListener_CatanClientConnected(object tcpListener, Cartan.Network.Events.CatanClientConnectedEventArgs e)
         {
-            
+            catanClients.Add(e.CatanClient);
+
+            if (catanClients.Count + 1 >= maxPlayerCount)
+            {
+                catanListener.Stop();
+            }
+
+            Console.WriteLine($"Catan: {e.CatanClient.PlayerName}");
         }
-
-        private void CartanListener_CartanClientConnected(object tcpListener, Network.Events.ReceivedMessageEventArgs clientArgs)
-        {
-            cartanClients.Add(clientArgs.CartanClient);
-
-            if (cartanClients.Count + 1 >= playerCount)
-                cartanListener.Stop();
-
-            Console.WriteLine($"Catan: {clientArgs.CartanClient.PlayerName} connected. Message = {clientArgs.Message}");
-        }
-
+       
     }
 }

@@ -1,5 +1,5 @@
-﻿using Cartan.Network;
-using Catan.Network.Events;
+﻿using Cartan.Network.Events;
+using Cartan.Network.Messaging;
 using Catan.Network.Messaging;
 using Catan.Network.Messaging.ClientMessages;
 using System;
@@ -17,34 +17,34 @@ namespace Catan.Network
     public class CatanTcpListener
     {
         /*########################################    Delegates    ####################################*/
-        public delegate void CartanClientConnectedHandler(object tcpListener, ReceivedMessageEventArgs clientArgs);
-        public delegate void ReceivedMessageHandler(object tcpListener, ReceivedMessageEventArgs receivedMessage);
+        public delegate void CatanClientConnectedHandler(object tcpListener, CatanClientConnectedEventArgs e);
         /*##############################################################################################*/
-        public event CartanClientConnectedHandler CartanClientConnected;
-        public event ReceivedMessageHandler ReceivedMessage;
+        public event CatanClientConnectedHandler CatanClientConnected;
 
         private string authPassword;
         public bool IsListening { private set; get; }
         private TcpListener tcpListener;
+        private IPEndPoint ipEndPoint;
 
-        public CatanTcpListener(string authPassword)
+        public CatanTcpListener(IPEndPoint ipEndPoint,string authPassword)
         {
             this.authPassword = authPassword;
+            this.ipEndPoint = ipEndPoint;
         }
         public void Start()
         {
-            this.tcpListener = new TcpListener(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 123));
+            this.tcpListener = new TcpListener(ipEndPoint);
             this.IsListening = true;
-           
+
             while (IsListening)
             {
                 try
                 {
                     tcpListener.Start();
-                    var netStreamReader = new NetworkStreamReader(tcpListener.AcceptTcpClient());
-                    netStreamReader.ReadCompleted += CatanTcpListener_ReadCompleted;
-                    netStreamReader.ReadAsync();
-                    
+                    var netMessageStreamReader = new CatanNetworkMessageStreamReader(tcpListener.AcceptTcpClient());
+                    netMessageStreamReader.ReadCompleted += authMessageRead;
+                    netMessageStreamReader.ReadError += authMessageReadError;
+                    netMessageStreamReader.ReadAsync();
                 }
                 catch (Exception ex)
                 {
@@ -55,75 +55,30 @@ namespace Catan.Network
             tcpListener.Stop();
         }
 
-        private void CatanTcpListener_ReadCompleted(object netStreamReader, Cartan.Network.Events.ReadCompletedEventArgs readCompletedEventArgs)
+        private void authMessageReadError(object catanNetworkMessageStreamReader, NetworkMessageReadErrorEventArgs e)
+        {
+            e.TcpClient.Close();
+        }
+
+        private void authMessageRead(object catanNetworkMessageStreamReader, NetworkMessageReadCompletedEventArgs readCompletedEventArgs)
         {
             try
             {
-                CatanClientAuthenticationMessage authMessage = new NetworkMessageFormatter<CatanClientAuthenticationMessage>().Deserialize(readCompletedEventArgs.Data);
-                if (authMessage != null && authMessage.Password.Equals(authPassword))
+                CatanClientAuthenticationMessage message = null;
+                if ((readCompletedEventArgs.NetworkMessage is CatanClientAuthenticationMessage) &&
+                    (message = readCompletedEventArgs.NetworkMessage as CatanClientAuthenticationMessage).Password.Equals(authPassword))
                 {
-                    CatanClient cartanClient = new CatanClient(readCompletedEventArgs.TcpClient, authMessage.Playername);
-                    CartanClientConnected?.Invoke(tcpListener, new ReceivedMessageEventArgs(cartanClient, authMessage));
-
-                    // todo
-                    byte[] buffer = new byte[NetworkMessage.MAX_DATA_SIZE_IN_BYTES];
-                    result.Value.GetStream().BeginRead(buffer, 0, buffer.Length, clientReceivedMessageBeginReadCallback, new KeyValuePair<byte[], CatanClient>(buffer, cartanClient));
+                    CatanClient catanClient = new CatanClient(readCompletedEventArgs.TcpClient, message.Playername);
+                    CatanClientConnected?.Invoke(this, new CatanClientConnectedEventArgs(catanClient));
                 }
                 else
                 {
-                    result.Value.Close();
+                    readCompletedEventArgs.TcpClient.Close();
                 }
             }
             catch (Exception ex)
             {
 
-            }
-        }
-
-        private void clienAuthenticationBeginReadCallback(IAsyncResult ar)
-        {
-            try
-            {
-                KeyValuePair<byte[], TcpClient> result = (KeyValuePair<byte[], TcpClient>)ar.AsyncState;
-                result.Value.GetStream().EndRead(ar);
-
-                CatanClientAuthenticationMessage authMessage = new NetworkMessageFormatter<CatanClientAuthenticationMessage>().Deserialize(result.Key as byte[]);
-                if (authMessage != null && authMessage.Password.Equals(authPassword))
-                {
-                    CatanClient cartanClient = new CatanClient(result.Value, authMessage.Playername);
-                    CartanClientConnected?.Invoke(tcpListener, new ReceivedMessageEventArgs(cartanClient, authMessage));
-
-
-                    byte[] buffer = new byte[NetworkMessage.MAX_DATA_SIZE_IN_BYTES];
-                    result.Value.GetStream().BeginRead(buffer, 0, buffer.Length, clientReceivedMessageBeginReadCallback, new KeyValuePair<byte[], CatanClient>(buffer, cartanClient));
-                }
-                else
-                {
-                    result.Value.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                
-            }
-        }
-
-        private void clientReceivedMessageBeginReadCallback(IAsyncResult ar)
-        {
-            try
-            {
-                KeyValuePair<byte[], CatanClient> result = (KeyValuePair<byte[], CatanClient>)ar.AsyncState;
-                result.Value.TcpClient.GetStream().EndRead(ar);
-
-                NetworkMessage message = new NetworkMessageFormatter<NetworkMessage>().Deserialize(result.Key as byte[]);
-                if (message != null)
-                {
-                    ReceivedMessage?.Invoke(tcpListener, new ReceivedMessageEventArgs(result.Value, message));
-                }
-            }
-            catch (Exception ex)
-            {
-                
             }
         }
 

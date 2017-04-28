@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Cartan.Network.Events
 {
-    public class ReadCompletedEventArgs:EventArgs
+    public class NetworkMessageReadCompletedEventArgs: EventArgs
     {
-        public byte[] Data { private set; get; }
+        public NetworkMessage NetworkMessage { private set; get; }
         public TcpClient TcpClient { private set; get; }
-        public ReadCompletedEventArgs(byte[] data, TcpClient tcpClient)
+        public NetworkMessageReadCompletedEventArgs(NetworkMessage catanNetworkMessage, TcpClient tcpClient)
         {
-            this.Data = data;
+            this.NetworkMessage = catanNetworkMessage;
             this.TcpClient = tcpClient;
         }
     }

@@ -9,8 +9,8 @@ namespace Cartan
     {
         static void Main(string[] args)
         {
-            CatanServer ser = new CatanServer(2, authPassword:"ibo");
-            ser.Run();
+            CatanServer ser = new CatanServer(2, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 123), "ibo");
+            ser.Start();
             Console.Read();
         }
     }
