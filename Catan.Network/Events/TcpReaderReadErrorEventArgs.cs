@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace Cartan.Network.Events
 {
-    public class NetworkMessageReadCompletedEventArgs: EventArgs
+    public class TcpReaderReadErrorEventArgs:EventArgs
     {
-        public NetworkMessage NetworkMessage { private set; get; }
         public TcpClient TcpClient { private set; get; }
-        public NetworkMessageReadCompletedEventArgs(NetworkMessage catanNetworkMessage, TcpClient tcpClient)
+        public Exception Exception { private set; get; }
+        public TcpReaderReadErrorEventArgs(TcpClient tcpClient, Exception ex)
         {
-            this.NetworkMessage = catanNetworkMessage;
             this.TcpClient = tcpClient;
+            this.Exception = ex;
         }
     }
 }

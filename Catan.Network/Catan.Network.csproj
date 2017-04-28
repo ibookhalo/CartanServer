@@ -42,16 +42,16 @@
   <ItemGroup>
     <Compile Include="CatanClient.cs" />
     <Compile Include="Events\CatanClientConnectedEventArgs.cs" />
-    <Compile Include="Events\NetworkMessageReadCompletedEventArgs.cs" />
-    <Compile Include="Events\NetworkMessageReadErrorEventArgs.cs" />
+    <Compile Include="Events\TcpReaderReadCompletedEventArgs.cs" />
+    <Compile Include="Events\TcpReaderReadErrorEventArgs.cs" />
     <Compile Include="Events\NetworkMessageSendCompletedEventArgs.cs" />
     <Compile Include="Events\NetworkMessageSendErrorEventArgs.cs" />
     <Compile Include="Messaging\ClientMessages\CatanClientAuthenticationMessage.cs" />
     <Compile Include="CatanTcpListener.cs" />
     <Compile Include="Messaging\NetworkMessage.cs" />
     <Compile Include="Messaging\NetworkMessageFormatter.cs" />
-    <Compile Include="Messaging\NetworkStreamMessageReader.cs" />
-    <Compile Include="Messaging\NetworkStreamMessageWriter.cs" />
+    <Compile Include="Messaging\TcpReader.cs" />
+    <Compile Include="Messaging\TcpWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

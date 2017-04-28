@@ -41,7 +41,7 @@ namespace Catan.Network
                 try
                 {
                     tcpListener.Start();
-                    var netMessageStreamReader = new NetworkMessageStreamReader(tcpListener.AcceptTcpClient());
+                    var netMessageStreamReader = new TcpReader(tcpListener.AcceptTcpClient());
                     netMessageStreamReader.ReadCompleted += authMessageRead;
                     netMessageStreamReader.ReadError += authMessageReadError;
                     netMessageStreamReader.ReadAsync();
@@ -55,12 +55,12 @@ namespace Catan.Network
             tcpListener.Stop();
         }
 
-        private void authMessageReadError(object catanNetworkMessageStreamReader, NetworkMessageReadErrorEventArgs e)
+        private void authMessageReadError(object catanNetworkMessageStreamReader, TcpReaderReadErrorEventArgs e)
         {
             e.TcpClient.Close();
         }
 
-        private void authMessageRead(object catanNetworkMessageStreamReader, NetworkMessageReadCompletedEventArgs readCompletedEventArgs)
+        private void authMessageRead(object catanNetworkMessageStreamReader, TcpReaderReadCompletedEventArgs  readCompletedEventArgs)
         {
             try
             {

@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace Cartan.Network.Messaging
 {
-    public class NetworkMessageStreamReader
+    public class TcpReader
     {
         public TcpClient TcpClient { private set; get; }
         private NetworkStream netStream;
 
-        public delegate void ReadCompletedHandler(object catanNetworkMessageStreamReader, NetworkMessageReadCompletedEventArgs e);
-        public delegate void ReadErrorHandler(object catanNetworkMessageStreamReader, NetworkMessageReadErrorEventArgs e);
+        public delegate void ReadCompletedHandler(object obj, TcpReaderReadCompletedEventArgs  e);
+        public delegate void ReadErrorHandler(object obj, TcpReaderReadErrorEventArgs e);
 
         public event ReadCompletedHandler ReadCompleted;
         public event ReadErrorHandler ReadError;
 
-        public NetworkMessageStreamReader(TcpClient tcpClient)
+        public TcpReader(TcpClient tcpClient)
         {
             this.TcpClient = tcpClient;
         }
@@ -44,15 +44,7 @@ namespace Cartan.Network.Messaging
             try
             {
                 netStream.EndRead(ar);
-                NetworkMessage networkMessage = new NetworkMessageFormatter().Deserialize(ar.AsyncState as byte[]);
-                if (networkMessage !=null)
-                {
-                    ReadCompleted?.Invoke(this, new NetworkMessageReadCompletedEventArgs(networkMessage,TcpClient));
-                }
-                else
-                {
-                    ReadError?.Invoke(this, new NetworkMessageReadErrorEventArgs(TcpClient));
-                }
+                ReadCompleted?.Invoke(this, new TcpReaderReadCompletedEventArgs(ar.AsyncState as byte[], TcpClient));
             }
             catch (Exception ex)
             {

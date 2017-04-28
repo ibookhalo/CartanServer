@@ -1,5 +1,7 @@
-﻿using Cartan.Network.Messaging;
+﻿using Cartan.Network.Events;
+using Cartan.Network.Messaging;
 using Catan.Network;
+using Catan.Network.Messaging.ClientMessages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,21 +14,35 @@ namespace Catan.Server
 {
     public class CatanServer
     {
-        private CatanTcpListener catanListener;
+        private TcpListener tcpListener;
         private List<CatanClient> catanClients;
         private ushort maxPlayerCount;
 
-        public CatanServer(ushort playerCount,IPEndPoint ipEndPoint,string authPassword)
+        public CatanServer(ushort maxPlayerCount,IPEndPoint ipEndPoint,string authPassword)
         {
-            this.catanListener = new CatanTcpListener(ipEndPoint, authPassword);
+            this.tcpListener = new TcpListener(ipEndPoint);
             this.catanClients = new List<CatanClient>();
-            this.maxPlayerCount = playerCount;
+            this.maxPlayerCount = maxPlayerCount;
         }
 
         public void Start()
         {
-            catanListener.CatanClientConnected += CatanListener_CatanClientConnected; ;
-            catanListener.Start();
+            try
+            {
+                tcpListener.Start();
+                var tcpReader = new TcpReader(tcpListener.AcceptTcpClient());
+                tcpReader.ReadCompleted += TcpReader_ReadCompleted;
+                tcpReader.ReadAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private void TcpReader_ReadCompleted(object obj, TcpReaderReadCompletedEventArgs  e)
+        {
+            
         }
 
         private void CatanListener_CatanClientConnected(object tcpListener, Cartan.Network.Events.CatanClientConnectedEventArgs e)
@@ -36,7 +52,7 @@ namespace Catan.Server
 
             if (catanClients.Count + 1 == maxPlayerCount)
             {
-                catanListener.Stop();
+                this.tcpListener.Stop();
             }
 
             if (catanClients.Count==maxPlayerCount)
