@@ -42,21 +42,19 @@
   <ItemGroup>
     <Compile Include="CatanClient.cs" />
     <Compile Include="Events\CatanClientConnectedEventArgs.cs" />
-    <Compile Include="Events\TcpReaderReadCompletedEventArgs.cs" />
-    <Compile Include="Events\TcpReaderReadErrorEventArgs.cs" />
-    <Compile Include="Events\NetworkMessageSendCompletedEventArgs.cs" />
-    <Compile Include="Events\NetworkMessageSendErrorEventArgs.cs" />
+    <Compile Include="Events\NetworkMessageReaderReadCompletedEventArgs.cs" />
+    <Compile Include="Events\NetworkMessageReaderReadErrorEventArgs.cs" />
+    <Compile Include="Events\NetworkMessageWriterWriteCompletedEventArgs.cs" />
+    <Compile Include="Events\NetworkMessageWriterWriteErrorEventArgs.cs" />
     <Compile Include="Messaging\ClientMessages\CatanClientAuthenticationMessage.cs" />
-    <Compile Include="CatanTcpListener.cs" />
     <Compile Include="Messaging\NetworkMessage.cs" />
     <Compile Include="Messaging\NetworkMessageFormatter.cs" />
-    <Compile Include="Messaging\TcpReader.cs" />
-    <Compile Include="Messaging\TcpWriter.cs" />
+    <Compile Include="Messaging\ServerMessages\GameStateMessage.cs" />
+    <Compile Include="Messaging\NetworkMessageReader.cs" />
+    <Compile Include="Messaging\NetworkMessageWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Messaging\ServerMessages\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

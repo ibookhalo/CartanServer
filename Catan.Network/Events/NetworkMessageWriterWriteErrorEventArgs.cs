@@ -6,15 +6,17 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cartan.Network.Events
+namespace Catan.Network.Events
 {
-    public class TcpReaderReadErrorEventArgs:EventArgs
+    public class NetworkMessageWriterWriteErrorEventArgs
     {
         public TcpClient TcpClient { private set; get; }
         public Exception Exception { private set; get; }
-        public TcpReaderReadErrorEventArgs(TcpClient tcpClient, Exception ex)
+        public NetworkMessage NetworkMessage { private set; get; }
+        public NetworkMessageWriterWriteErrorEventArgs(NetworkMessage netMessage, TcpClient tcpClient, Exception ex)
         {
             this.TcpClient = tcpClient;
+            this.NetworkMessage = netMessage;
             this.Exception = ex;
         }
     }

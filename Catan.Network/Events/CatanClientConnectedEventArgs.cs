@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Catan.Network;
 
-namespace Cartan.Network.Events
+namespace Catan.Network.Events
 {
     public class CatanClientConnectedEventArgs:EventArgs
     {

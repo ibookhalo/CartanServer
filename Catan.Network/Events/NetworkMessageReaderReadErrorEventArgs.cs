@@ -6,16 +6,16 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cartan.Network.Events
+namespace Catan.Network.Events
 {
-    public class TcpReaderReadCompletedEventArgs : EventArgs
+    public class NetworkMessageReaderReadErrorEventArgs:EventArgs
     {
-        public byte[] Data { private set; get; }
         public TcpClient TcpClient { private set; get; }
-        public TcpReaderReadCompletedEventArgs (byte[] data, TcpClient tcpClient)
+        public Exception Exception { private set; get; }
+        public NetworkMessageReaderReadErrorEventArgs(TcpClient tcpClient, Exception ex)
         {
-            this.Data = data;
             this.TcpClient = tcpClient;
+            this.Exception = ex;
         }
     }
- }
+}

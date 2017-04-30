@@ -10,21 +10,21 @@ using System.Threading.Tasks;
 
 namespace Catan.Network.Messaging
 {
-    public class NetworkMessageFormatter
+    public class NetworkMessageFormatter<T> where T:NetworkMessage
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="data"></param>
         /// <returns>Liefert NULL, wenn die Deserialisierung fehlschlägt.</returns>
-        public NetworkMessage Deserialize(byte[] data)
+        public T Deserialize(byte[] data)
         {
             try
             {
                 BinaryFormatter bf = new BinaryFormatter();
                 using (MemoryStream ms = new MemoryStream(data))
                 {
-                   return bf.Deserialize(ms) as NetworkMessage;
+                   return bf.Deserialize(ms) as T;
                 }
                 
             }
@@ -39,7 +39,7 @@ namespace Catan.Network.Messaging
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Liefert NULL, wenn die Deserialisierung fehlschlägt.</returns>
-        public byte[] Serialize(NetworkMessage message)
+        public byte[] Serialize(T message)
         {
             try
             {

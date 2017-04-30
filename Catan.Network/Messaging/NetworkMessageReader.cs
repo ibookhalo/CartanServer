@@ -1,4 +1,4 @@
-﻿using Cartan.Network.Events;
+﻿using Catan.Network.Events;
 using Catan.Network.Messaging;
 using System;
 using System.Collections.Generic;
@@ -7,20 +7,20 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cartan.Network.Messaging
+namespace Catan.Network.Messaging
 {
-    public class TcpReader
+    public class NetworkMessageReader:NetworkMessage
     {
         public TcpClient TcpClient { private set; get; }
         private NetworkStream netStream;
 
-        public delegate void ReadCompletedHandler(object obj, TcpReaderReadCompletedEventArgs  e);
-        public delegate void ReadErrorHandler(object obj, TcpReaderReadErrorEventArgs e);
+        public delegate void ReadCompletedHandler(object obj, NetworkMessageReaderReadCompletedEventArgs  e);
+        public delegate void ReadErrorHandler(object obj, NetworkMessageReaderReadErrorEventArgs e);
 
         public event ReadCompletedHandler ReadCompleted;
         public event ReadErrorHandler ReadError;
 
-        public TcpReader(TcpClient tcpClient)
+        public NetworkMessageReader(TcpClient tcpClient)
         {
             this.TcpClient = tcpClient;
         }
@@ -35,7 +35,7 @@ namespace Cartan.Network.Messaging
             }
             catch (Exception ex)
             {
-                throw ex;
+                ReadError?.Invoke(this, new NetworkMessageReaderReadErrorEventArgs(TcpClient, ex));
             }
         }
 
@@ -44,11 +44,16 @@ namespace Cartan.Network.Messaging
             try
             {
                 netStream.EndRead(ar);
-                ReadCompleted?.Invoke(this, new TcpReaderReadCompletedEventArgs(ar.AsyncState as byte[], TcpClient));
+                NetworkMessage netMesasge = new NetworkMessageFormatter<NetworkMessage>().Deserialize(ar.AsyncState as byte[]);
+                if (netMesasge!=null)
+                    ReadCompleted?.Invoke(this, new NetworkMessageReaderReadCompletedEventArgs(netMesasge, TcpClient));
+                else
+                    ReadError?.Invoke(this, new NetworkMessageReaderReadErrorEventArgs(TcpClient,new ArgumentNullException("NetworkMessage is null")));
+
             }
             catch (Exception ex)
             {
-                throw ex;
+                ReadError?.Invoke(this, new NetworkMessageReaderReadErrorEventArgs(TcpClient, ex));
             }
 
         }

@@ -3,7 +3,7 @@ using Catan.Server;
 using System;
 using System.Net;
 
-namespace Cartan
+namespace Catan
 {
     class Program
     {
