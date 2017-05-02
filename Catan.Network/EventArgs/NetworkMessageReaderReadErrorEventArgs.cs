@@ -6,9 +6,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Catan.Network.Events
+namespace Catan.Network.EventArgs
 {
-    public class NetworkMessageReaderReadErrorEventArgs:EventArgs
+    public class NetworkMessageReaderReadErrorEventArgs: System.EventArgs
     {
         public TcpClient TcpClient { private set; get; }
         public Exception Exception { private set; get; }

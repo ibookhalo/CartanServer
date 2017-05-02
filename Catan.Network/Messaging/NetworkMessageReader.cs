@@ -1,4 +1,4 @@
-﻿using Catan.Network.Events;
+﻿using Catan.Network.EventArgs;
 using Catan.Network.Messaging;
 using System;
 using System.Collections.Generic;

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Catan.Network;
 
-namespace Catan.Network.Events
+namespace Catan.Network.EventArgs
 {
-    public class CatanClientConnectedEventArgs:EventArgs
+    public class CatanClientConnectedEventArgs: System.EventArgs
     {
         public CatanClient CatanClient { private set; get; }
 

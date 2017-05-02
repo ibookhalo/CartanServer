@@ -1,8 +1,6 @@
-﻿using Catan.Network.Events;
+﻿using Catan.Network.EventArgs;
 using Catan.Network.Messaging;
 using Catan.Network;
-using Catan.Network.Messaging;
-using Catan.Network.Messaging.ClientMessages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +9,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Catan.Network.Messaging.ServerMessages;
 
 namespace Catan.Server
 {
@@ -38,26 +35,30 @@ namespace Catan.Server
             {
                 listening = true;
                 tcpListener.Start();
-                while (listening)
+                while (true)
                 {
                     var netMessageReader = new NetworkMessageReader(tcpListener.AcceptTcpClient());
-                    netMessageReader.ReadCompleted += NetMessageReader_CheckClientAuth;
-                    netMessageReader.ReadError += NetMessageReader_ReadError;
+
+                    netMessageReader.ReadCompleted += NetMessageReader_CatanClientAuth_Request_ReadCompleted;
+                    netMessageReader.ReadError += (obj, e) => { e.TcpClient.Close(); };
                     netMessageReader.ReadAsync();
                 }
-                tcpListener.Stop();
+            }
+            catch (SocketException socketEx)
+            {
+                if (socketEx.SocketErrorCode==SocketError.Interrupted)
+                {
+                    // Tcplistener wurde geschlossen. Durch Stop()
+                    return;
+                }
             }
             catch (Exception ex)
             {
 
             }
         }
-
-        private void NetMessageReader_ReadError(object obj, NetworkMessageReaderReadErrorEventArgs e)
-        {
-            e.TcpClient.Close();
-        }
-        private void NetMessageReader_CheckClientAuth(object obj, NetworkMessageReaderReadCompletedEventArgs e)
+        
+        private void NetMessageReader_CatanClientAuth_Request_ReadCompleted(object obj, NetworkMessageReaderReadCompletedEventArgs e)
         {
             lock (catanClients)
             {
@@ -66,19 +67,10 @@ namespace Catan.Server
                     CatanClientAuthenticationMessage authMessage = e.NetworkMessage as CatanClientAuthenticationMessage;
                     if (authMessage.Password.Equals(authPassword))
                     {
-                        // new catan-client
-                        CatanClient catanClient = new CatanClient(e.TcpClient, authMessage.Playername);
-                        catanClients.Add(catanClient);
-                        if (catanClients.Count + 1 == maxPlayerCount)
-                        {
-                            listening = false;
-                        }
-                        Console.WriteLine($"Catan player joined: {catanClient.PlayerName}");
-                        if (catanClients.Count == maxPlayerCount)
-                        {
-                            letClientsPlayCatan();
-                        }
-
+                        NetworkMessageWriter netMessageWriter = new NetworkMessageWriter(e.TcpClient);
+                        netMessageWriter.WriteError += (o, ee) => { ee.TcpClient.Close(); };
+                        netMessageWriter.WriteCompleted += NetMessageWriter_CatanClientAuth_Response_WriteCompleted;
+                        netMessageWriter.WriteAsync(authMessage);
                     }
                     else
                     {
@@ -91,6 +83,23 @@ namespace Catan.Server
                 }
             }
         }
+
+        private void NetMessageWriter_CatanClientAuth_Response_WriteCompleted(object obj, NetworkMessageWriterWriteCompletedEventArgs e)
+        {
+            checkClientConnections(true);
+
+            // new catan-client
+            CatanClient catanClient = new CatanClient(e.TcpClient, (e.NetMessage as CatanClientAuthenticationMessage).Playername);
+            catanClients.Add(catanClient);
+          
+            Console.WriteLine($"Catan player joined: {catanClient.PlayerName}");
+            if (catanClients.Count == maxPlayerCount)
+            {
+                tcpListener.Stop();
+                letClientsPlayCatan();
+            }
+        }
+
         private bool isCatanClientConnected(CatanClient catanClient)
         {
             try
@@ -114,16 +123,16 @@ namespace Catan.Server
             catanClients.Reverse();
 
             currentClient = catanClients.First();
-            GameStateMessage gameState = new GameStateMessage(catanClients, currentClient);
+            GameStateMessage gameState = new GameStateMessage(catanClients, currentClient,GameStateMessage.GameState.Running);
             sendBroadcastMessage(gameState);
 
         }
-        private void checkClientConnections()
+        private void checkClientConnections(bool silently=false)
         {
             lock (catanClients)
             {
-                if (catanClients.RemoveAll(catanClient => !isCatanClientConnected(catanClient)) > 0)
-                    throw new CatanClientDisconnectedException();
+                if (catanClients.RemoveAll(catanClient => !isCatanClientConnected(catanClient)) > 0 && !silently)
+                        throw new CatanClientDisconnectedException();
             }
         }
 

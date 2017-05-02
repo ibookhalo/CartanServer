@@ -6,9 +6,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Catan.Network.Events
+namespace Catan.Network.EventArgs
 {
-    public class NetworkMessageWriterWriteCompletedEventArgs:EventArgs
+    public class NetworkMessageWriterWriteCompletedEventArgs: System.EventArgs
     {
         public TcpClient TcpClient { private set; get; }
         public NetworkMessage NetMessage { private set; get; }
