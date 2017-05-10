@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Catan.Game;
 
 namespace Catan.Server
 {
@@ -18,7 +19,6 @@ namespace Catan.Server
         private List<CatanClient> catanClients;
         private ushort maxPlayerCount;
         private string authPassword;
-        private bool listening;
         private CatanClient currentClient;
 
         public CatanServer(ushort maxPlayerCount, IPEndPoint ipEndPoint, string authPassword)
@@ -33,7 +33,6 @@ namespace Catan.Server
         {
             try
             {
-                listening = true;
                 tcpListener.Start();
                 while (true)
                 {
@@ -92,7 +91,7 @@ namespace Catan.Server
             CatanClient catanClient = new CatanClient(e.TcpClient, (e.NetMessage as CatanClientAuthenticationMessage).Playername);
             catanClients.Add(catanClient);
           
-            Console.WriteLine($"Catan player joined: {catanClient.PlayerName}");
+            Console.WriteLine($"Catan player joined: {catanClient.Name}");
             if (catanClients.Count == maxPlayerCount)
             {
                 tcpListener.Stop();
@@ -108,7 +107,7 @@ namespace Catan.Server
 
                 if (isDisconnected)
                 {
-                    Console.WriteLine($"{catanClient.PlayerName} is disconnected !");
+                    Console.WriteLine($"{catanClient.Name} is disconnected !");
                 }
                 return !isDisconnected;
             }

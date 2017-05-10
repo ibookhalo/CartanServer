@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Catan.Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +11,6 @@ namespace Catan.Network.Messaging
     public class GameStateMessage:NetworkMessage
     {
         public enum GameState { Running, WaitingForClients }
-
-
         public List<CatanClient> Clients { private set; get; }
         public CatanClient CurrentClient { private set; get; }
         public GameState CurrentGameState { set; get; }
