@@ -8,14 +8,8 @@ using System.Threading.Tasks;
 
 namespace Catan.Network.EventArgs
 {
-    public class NetworkMessageReaderReadErrorEventArgs: System.EventArgs
+    public class NetworkMessageReaderReadErrorEventArgs:NetworkMessageErrorEventArgs
     {
-        public TcpClient TcpClient { private set; get; }
-        public Exception Exception { private set; get; }
-        public NetworkMessageReaderReadErrorEventArgs(TcpClient tcpClient, Exception ex)
-        {
-            this.TcpClient = tcpClient;
-            this.Exception = ex;
-        }
+        public NetworkMessageReaderReadErrorEventArgs(TcpClient tcpClient, Exception ex):base(tcpClient,ex) {}
     }
 }

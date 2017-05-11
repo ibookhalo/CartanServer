@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,8 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CatanClient.cs" />
     <Compile Include="EventArgs\CatanClientConnectedEventArgs.cs" />
+    <Compile Include="EventArgs\NetworkMessageErrorEventArgs.cs" />
     <Compile Include="EventArgs\NetworkMessageReaderReadCompletedEventArgs.cs" />
     <Compile Include="EventArgs\NetworkMessageReaderReadErrorEventArgs.cs" />
     <Compile Include="EventArgs\NetworkMessageWriterWriteCompletedEventArgs.cs" />
@@ -55,7 +56,12 @@
     <Compile Include="Messaging\NetworkMessageWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Catan.ClientInfo\Catan.Game.csproj">
+      <Project>{53A8C042-1428-4DA0-8B9E-1060CE04D386}</Project>
+      <Name>Catan.Game</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
