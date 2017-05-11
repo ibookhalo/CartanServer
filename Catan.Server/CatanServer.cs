@@ -42,7 +42,7 @@ namespace Catan.Server
                     netMessageReader.ReadCompleted += NetMessageReader_CatanClientAuth_Request_ReadCompleted;
                     netMessageReader.ReadError += (obj, e) => { e.TcpClient.Close(); };
                     netMessageReader.ReadAsync();
-                }
+                    }
             }
             catch (SocketException socketEx)
             {
