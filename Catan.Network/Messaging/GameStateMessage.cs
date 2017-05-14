@@ -10,16 +10,14 @@ namespace Catan.Network.Messaging
     [Serializable]
     public class GameStateMessage:NetworkMessage
     {
-        public enum GameState { Running, WaitingForClients }
         public List<CatanClient> Clients { private set; get; }
         public CatanClient CurrentClient { private set; get; }
-        public GameState CurrentGameState { set; get; }
-
-        public GameStateMessage(List<CatanClient> clients,CatanClient currentClient,GameState currentGameState)
+        public HexagonField[][] HexagoneFields { private set; get; }
+        public GameStateMessage(List<CatanClient> clients,CatanClient currentClient, HexagonField[][] hexagoneFields)
         {
             this.Clients = clients;
             this.CurrentClient = currentClient;
-            this.CurrentGameState = currentGameState;
+            this.HexagoneFields = hexagoneFields;
         }
     }
 }

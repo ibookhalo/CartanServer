@@ -13,19 +13,20 @@ namespace Catan.Game
     [Serializable]
     public class CatanClient
     {
+        [NonSerialized]
         private static uint id;
 
         [NonSerialized]
         private TcpClient tcpClient;
         public TcpClient TcpClient { get { return tcpClient; }}
-
-        public IPEndPoint IPAddress { get { return ((IPEndPoint)tcpClient?.Client.RemoteEndPoint); } }
+        public string IPAddressPortNr { get; private set; }
+        public uint Port { get; private set; }
 
         // Spielfiguren
         public SpielFigurenContainer SpielfigurenContainer { private set; get; }
 
         // Karten
-
+        public KartenContainer KartenContainer { private set; get; }
 
         public Color Color { private set; get; }
 
@@ -33,14 +34,16 @@ namespace Catan.Game
         public uint ID { private set; get; }
    
         public uint Siegpunkte { set; get; }
-     
 
-        public CatanClient(TcpClient tcpClient, string name)
+
+        public CatanClient(TcpClient tcpClient,string IpAddressPortNr, string name)
         {
             this.tcpClient = tcpClient;
             this.Name = name;
+            this.IPAddressPortNr = IpAddressPortNr;
 
             this.SpielfigurenContainer = new Game.SpielFigurenContainer();
+            this.KartenContainer = new Game.KartenContainer();
 
             this.ID = ++id;
         }

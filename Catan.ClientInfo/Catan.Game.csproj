@@ -7,8 +7,8 @@
     <ProjectGuid>{53A8C042-1428-4DA0-8B9E-1060CE04D386}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Catan.ClientInfo</RootNamespace>
-    <AssemblyName>Catan.ClientInfo</AssemblyName>
+    <RootNamespace>Catan.Game</RootNamespace>
+    <AssemblyName>Catan.Game</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,11 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bank.cs" />
     <Compile Include="CatanClient.cs" />
-    <Compile Include="HexagonePosition.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="RohstoffKartenContainer.cs" />
+    <Compile Include="HexagonField.cs" />
+    <Compile Include="HexagonPosition.cs" />
+    <Compile Include="KartenContainer.cs" />
     <Compile Include="SpielFigur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LandFeld.cs" />

@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Catan.Game
 {
+    [Serializable]
     public class SpielFigurenContainer
     {
         public List<Siedlung> Siedlungen { private set; get; }
@@ -14,9 +15,9 @@ namespace Catan.Game
 
         public SpielFigurenContainer()
         {
-            this.Siedlungen = new List<Game.Siedlung>();
-            this.Staedte = new List<Game.Stadt>();
-            this.Strassen = new List<Game.Strasse>();
+            this.Siedlungen = new List<Game.Siedlung>(capacity: 5);
+            this.Staedte = new List<Game.Stadt>(capacity: 4);
+            this.Strassen = new List<Game.Strasse>(capacity: 15);
         }
     }
 }

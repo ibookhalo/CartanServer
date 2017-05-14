@@ -40,9 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CatanClientDisconnectedException.cs" />
-    <Compile Include="CatanServer.cs" />
+    <Compile Include="Interfaces\ILogicLayer.cs" />
+    <Compile Include="Interfaces\INetworkLayer.cs" />
+    <Compile Include="LogicLayer\Bank.cs" />
+    <Compile Include="NetworkLayer\CatanClientDisconnectedException.cs" />
+    <Compile Include="NetworkLayer\CatanServer.cs" />
+    <Compile Include="LogicLayer\GameLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="LogicLayer\RandomHexagonFieldInfoGenerator.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

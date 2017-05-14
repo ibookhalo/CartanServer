@@ -5,11 +5,12 @@ using System.Text;
 
 namespace Catan.Game
 {
+    [Serializable]
     public class Strasse : SpielFigur
     {
         public uint EdgeIndex { get; set; }
 
-        public Strasse(HexagonePosition HexagonePositionIndex, uint edgeIndex) : base(HexagonePositionIndex)
+        public Strasse(HexagonPosition HexagonePositionIndex, uint edgeIndex) : base(HexagonePositionIndex)
         {
             this.EdgeIndex = edgeIndex;
         }

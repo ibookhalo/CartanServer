@@ -5,12 +5,13 @@ using System.Text;
 
 namespace Catan.Game
 {
-    public class HexagonePosition
+    [Serializable]
+    public class HexagonPosition
     {
         public uint RowIndex { private set; get; }
         public uint ColumnIndex { private set; get; }
 
-        public HexagonePosition(uint rowIndex,uint columnIndex)
+        public HexagonPosition(uint rowIndex,uint columnIndex)
         {
             this.RowIndex = rowIndex;
             this.ColumnIndex = columnIndex;

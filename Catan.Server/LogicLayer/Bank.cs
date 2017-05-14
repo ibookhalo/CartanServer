@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Catan.Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Catan.Game
+namespace Catan.Server.LogicLayer
 {
     public static class Bank
     {
-        public static void GetRohstoffkarte(RohstoffKartenContainer rohstoffkarten,LandFeld.LandFeldErtrag abgeben,LandFeld.LandFeldErtrag nehmen)
+        public static void GetRohstoffkarte(KartenContainer rohstoffkarten, KartenContainer.Rohstoffkarte abgeben, KartenContainer.Rohstoffkarte nehmen)
         {
-            if (rohstoffkarten.GetAnzahlByRohstoff(abgeben)>=4)
+            if (rohstoffkarten.GetAnzahlByRohstoffkarte(abgeben)>=4)
             {
                 // 4 Karten abgeben
                 rohstoffkarten.RemoveRohstoffkarte(abgeben);

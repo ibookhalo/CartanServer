@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace Catan.Network.Messaging
 {
     [Serializable]
-    public class CatanClientAuthenticationMessage : NetworkMessage
+    public class CatanClientAuthenticationRequestMessage : NetworkMessage
     {
 
         public string Password { get; private set; }
         public string Playername { get; private set; }
 
-        public CatanClientAuthenticationMessage(string password, string playerName)
+        public CatanClientAuthenticationRequestMessage(string password, string playerName)
         {
             this.Password = password;
             this.Playername = playerName;

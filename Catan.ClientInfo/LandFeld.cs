@@ -7,56 +7,32 @@ namespace Catan.Game
 {
     public class LandFeld
     {
-       
-        public HexagonePosition HexagonPosition { private set; get; }
-        public Enums.Landfeld FeldType { private set; get; }
-        public Enums.Rohstoff FeldErtrag { private set; get; }
-        public LandFeld(Enums.Landfeld feldType,HexagonePosition hexagonePosition)
+        public enum LandfeldTyp { Weideland, Ackerland, BergwerkGold, Eisenmine, MeersFeld, Wohnstaette };
+        public HexagonPosition HexagonPosition { private set; get; }
+        public LandfeldTyp FeldType { private set; get; }
+        public KartenContainer.Rohstoffkarte FeldErtrag { private set; get; }
+        public LandFeld(LandfeldTyp feldType,HexagonPosition hexagonePosition)
         {
             this.FeldType = feldType;
             this.FeldErtrag = GetErtragByLandFeldTyp(feldType);
             this.HexagonPosition = hexagonePosition;
         }
-
-        public uint AnzahlErtraege
-        {
-            get
-            {
-                switch (FeldErtrag)
-                {
-                    case LandFeldErtrag.Wolle:
-                        return 1;
-                    case LandFeldErtrag.Getreide:
-                        return 1;
-                    case LandFeldErtrag.Gold:
-                        return 1;
-                    case LandFeldErtrag.Eisen:
-                        return 1;
-                    case LandFeldErtrag.Wasser:
-                        return 1;
-                    case LandFeldErtrag.Bewohner:
-                        return 2;
-                    default:
-                        throw new NotImplementedException($"Ertraege ({FeldErtrag}) ");
-                }
-            }
-        }
-        public static Enums.Rohstoff GetErtragByLandFeldTyp(Enums.Landfeld typ)
+        public static KartenContainer.Rohstoffkarte GetErtragByLandFeldTyp(LandfeldTyp typ)
         {
             switch (typ)
             {
-                case Enums.Landfeld.Weideland:
-                    return Enums.Rohstoff.Wolle;
-                case Enums.Landfeld.Ackerland:
-                    return Enums.Rohstoff.Getreide;
-                case Enums.Landfeld.BergwerkGold:
-                    return Enums.Rohstoff.Gold;
-                case Enums.Landfeld.Eisenmine:
-                    return Enums.Rohstoff.Eisen;
-                case Enums.Landfeld.MeersFeld:
-                    return Enums.Rohstoff.Wasser;
-                case Enums.Landfeld.Wohnstaette:
-                    return Enums.Rohstoff.Bewohner;
+                case LandfeldTyp.Weideland:
+                    return KartenContainer.Rohstoffkarte.Wolle;
+                case LandfeldTyp.Ackerland:
+                    return KartenContainer.Rohstoffkarte.Getreide;
+                case LandfeldTyp.BergwerkGold:
+                    return KartenContainer.Rohstoffkarte.Gold;
+                case LandfeldTyp.Eisenmine:
+                    return KartenContainer.Rohstoffkarte.Eisen;
+                case LandfeldTyp.MeersFeld:
+                    return KartenContainer.Rohstoffkarte.Wasser;
+                case LandfeldTyp.Wohnstaette:
+                    return KartenContainer.Rohstoffkarte.Bewohner;
                 default:
                     throw new NotImplementedException($"GetErtragByLandFeldTyp ({typ}) ");
             }

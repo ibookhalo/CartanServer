@@ -6,10 +6,11 @@ using System.Text;
 
 namespace Catan.Game
 {
+    [Serializable]
     public abstract class SpielFigur
     {
-        public HexagonePosition HexagonePositionIndex { set; get; }
-        public SpielFigur(HexagonePosition hexagonePositionIndex)
+        public HexagonPosition HexagonePositionIndex { set; get; }
+        public SpielFigur(HexagonPosition hexagonePositionIndex)
         {
             this.HexagonePositionIndex = hexagonePositionIndex;
         }

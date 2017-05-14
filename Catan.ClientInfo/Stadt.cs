@@ -6,9 +6,10 @@ using System.Text;
 
 namespace Catan.Game
 {
+    [Serializable]
     public class Stadt : Siedlung
     { 
-        public Stadt(HexagonePosition HexagonePositionIndex, uint pointIndex) : base(HexagonePositionIndex,pointIndex)
+        public Stadt(HexagonPosition HexagonePositionIndex, uint pointIndex) : base(HexagonePositionIndex,pointIndex)
         {
         }
     }

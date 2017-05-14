@@ -11,6 +11,7 @@ namespace Catan.Network.Messaging
 {
     public class NetworkMessageReader:NetworkMessage
     {
+        private bool readLoop;
         public TcpClient TcpClient { private set; get; }
         private NetworkStream netStream;
 
@@ -25,10 +26,12 @@ namespace Catan.Network.Messaging
             this.TcpClient = tcpClient;
         }
 
-        public void ReadAsync()
+        public void ReadAsync(bool readLoop = false)
         {
             try
             {
+                this.readLoop = readLoop;
+
                 byte[] buffer = new byte[TcpClient.ReceiveBufferSize = NetworkMessage.MAX_DATA_SIZE_IN_BYTES];
                 netStream = TcpClient.GetStream();
                 netStream.BeginRead(buffer, 0, buffer.Length, readCallback,buffer);
@@ -50,6 +53,11 @@ namespace Catan.Network.Messaging
                 else
                     ReadError?.Invoke(this, new NetworkMessageReaderReadErrorEventArgs(TcpClient,new ArgumentNullException("NetworkMessage is null")));
 
+
+                if (readLoop)
+                {
+                    ReadAsync(readLoop);
+                }
             }
             catch (Exception ex)
             {

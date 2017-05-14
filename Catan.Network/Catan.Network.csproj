@@ -48,7 +48,9 @@
     <Compile Include="EventArgs\NetworkMessageReaderReadErrorEventArgs.cs" />
     <Compile Include="EventArgs\NetworkMessageWriterWriteCompletedEventArgs.cs" />
     <Compile Include="EventArgs\NetworkMessageWriterWriteErrorEventArgs.cs" />
-    <Compile Include="Messaging\CatanClientAuthenticationMessage.cs" />
+    <Compile Include="Messaging\CatanClientAuthenticationRequestMessage.cs" />
+    <Compile Include="Messaging\CatanClientAuthenticationResponseMessage.cs" />
+    <Compile Include="Messaging\CatanClientStateChangeMessage.cs" />
     <Compile Include="Messaging\NetworkMessage.cs" />
     <Compile Include="Messaging\NetworkMessageFormatter.cs" />
     <Compile Include="Messaging\GameStateMessage.cs" />

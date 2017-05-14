@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Catan.Server
+namespace Catan.Server.NetworkLayer
 {
     class CatanClientDisconnectedException:Exception
     {
