@@ -59,7 +59,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Catan.ClientInfo\Catan.Game.csproj">
+    <ProjectReference Include="..\Catan.Game\Catan.Game.csproj">
       <Project>{53A8C042-1428-4DA0-8B9E-1060CE04D386}</Project>
       <Name>Catan.Game</Name>
     </ProjectReference>

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catan.Server", "Catan.Serve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catan.Network", "Catan.Network\Catan.Network.csproj", "{E1B4FF45-B346-43E0-BA82-2498641D7937}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catan.Game", "Catan.ClientInfo\Catan.Game.csproj", "{53A8C042-1428-4DA0-8B9E-1060CE04D386}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catan.Game", "Catan.Game\Catan.Game.csproj", "{53A8C042-1428-4DA0-8B9E-1060CE04D386}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

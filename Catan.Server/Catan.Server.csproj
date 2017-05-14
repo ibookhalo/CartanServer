@@ -51,7 +51,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\Catan.ClientInfo\Catan.Game.csproj">
+    <ProjectReference Include="..\Catan.Game\Catan.Game.csproj">
       <Project>{53a8c042-1428-4da0-8b9e-1060ce04d386}</Project>
       <Name>Catan.Game</Name>
     </ProjectReference>
