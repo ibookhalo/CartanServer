@@ -122,6 +122,11 @@ namespace Catan.Server.NetworkLayer
         {
             if (e.NetworkMessage is CatanClientStateChangeMessage)
             {
+                var gameState = e.NetworkMessage as CatanClientStateChangeMessage;
+                if (!catanClients.Exists(client=>client.ID==gameState.ClientID && client.IPAddressPortNr.Equals(e.TcpClient.Client.RemoteEndPoint.ToString())))
+                {
+
+                }
                 logicLayer.ClientGameStateChangeMessageReceived(e.NetworkMessage as CatanClientStateChangeMessage);
             }
         }

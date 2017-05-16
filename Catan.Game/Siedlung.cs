@@ -8,8 +8,8 @@ namespace Catan.Game
     [Serializable]
     public class Siedlung : SpielFigur
     {
-        public uint PointIndex { get; private set; }
-        public Siedlung(HexagonPosition HexagonePositionIndex, uint pointIndex) : base(HexagonePositionIndex)
+        public int PointIndex { get; private set; }
+        public Siedlung(HexagonPosition HexagonePositionIndex, int pointIndex) : base(HexagonePositionIndex)
         {
             this.PointIndex = pointIndex;
             

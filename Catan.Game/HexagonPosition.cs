@@ -8,10 +8,10 @@ namespace Catan.Game
     [Serializable]
     public class HexagonPosition
     {
-        public uint RowIndex { private set; get; }
-        public uint ColumnIndex { private set; get; }
+        public int RowIndex { private set; get; }
+        public int ColumnIndex { private set; get; }
 
-        public HexagonPosition(uint rowIndex,uint columnIndex)
+        public HexagonPosition(int rowIndex,int columnIndex)
         {
             this.RowIndex = rowIndex;
             this.ColumnIndex = columnIndex;

@@ -8,9 +8,9 @@ namespace Catan.Game
     [Serializable]
     public class Strasse : SpielFigur
     {
-        public uint EdgeIndex { get; set; }
+        public int EdgeIndex { get; set; }
 
-        public Strasse(HexagonPosition HexagonePositionIndex, uint edgeIndex) : base(HexagonePositionIndex)
+        public Strasse(HexagonPosition hexagonePosition, int edgeIndex) : base(hexagonePosition)
         {
             this.EdgeIndex = edgeIndex;
         }

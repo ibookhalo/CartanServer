@@ -9,10 +9,10 @@ namespace Catan.Game
     [Serializable]
     public abstract class SpielFigur
     {
-        public HexagonPosition HexagonePositionIndex { set; get; }
+        public HexagonPosition HexagonePosition { set; get; }
         public SpielFigur(HexagonPosition hexagonePositionIndex)
         {
-            this.HexagonePositionIndex = hexagonePositionIndex;
+            this.HexagonePosition = hexagonePositionIndex;
         }
     }
 }

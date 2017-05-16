@@ -12,16 +12,16 @@ namespace Catan.Game
         public enum Entwicklungskarte { Siegpunkt, Gold }
 
         // Rohstoffkarten
-        private uint rohstoff_wolle;
-        private uint rohstoff_getreide;
-        private uint rohstoff_gold;
-        private uint rohstoff_eisen;
-        private uint rohstoff_wasser;
-        private uint rohstoff_bewohner;
+        private int rohstoff_wolle;
+        private int rohstoff_getreide;
+        private int rohstoff_gold;
+        private int rohstoff_eisen;
+        private int rohstoff_wasser;
+        private int rohstoff_bewohner;
 
         // Entwicklungskarten
-        private uint entwicklung_gold;
-        private uint entwicklung_siegpunkt;
+        private int entwicklung_gold;
+        private int entwicklung_siegpunkt;
 
 
         public KartenContainer()
@@ -54,7 +54,7 @@ namespace Catan.Game
                     throw new NotImplementedException($"RemoveEntwicklungskarte ({entwicklungskarte}) ");
             }
         }
-        public uint GetAnzahlByEntwicklungskarte(Entwicklungskarte entwicklungskarte)
+        public int GetAnzahlByEntwicklungskarte(Entwicklungskarte entwicklungskarte)
         {
             switch (entwicklungskarte)
             {
@@ -119,7 +119,7 @@ namespace Catan.Game
             }
         }
 
-        public uint GetAnzahlByRohstoffkarte(Rohstoffkarte rohstoffkarte)
+        public int GetAnzahlByRohstoffkarte(Rohstoffkarte rohstoffkarte)
         {
             switch (rohstoffkarte)
             {
