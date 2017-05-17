@@ -24,13 +24,14 @@ namespace Catan.Game
 
 
             this.Edges = new List<Game.HexagonEdge>();
-            Edges.Add(new Game.HexagonEdge(new List<Game.HexagonPoint>() { points[0], points[1] },0));
-            Edges.Add(new Game.HexagonEdge(new List<Game.HexagonPoint>() { points[1], points[2] },1));
-            Edges.Add(new Game.HexagonEdge(new List<Game.HexagonPoint>() { points[2], points[3] },2));
-            Edges.Add(new Game.HexagonEdge(new List<Game.HexagonPoint>() { points[3], points[4] },3));
-            Edges.Add(new Game.HexagonEdge(new List<Game.HexagonPoint>() { points[4], points[5] },4));
-            Edges.Add(new Game.HexagonEdge(new List<Game.HexagonPoint>() { points[5], points[0] },5));
-
+            Edges.Add(new Game.HexagonEdge(points[0], points[1], 0));
+            Edges.Add(new Game.HexagonEdge(points[1], points[2], 1));
+            Edges.Add(new Game.HexagonEdge(points[2], points[3], 2));
+            Edges.Add(new Game.HexagonEdge(points[3], points[4], 3));
+            Edges.Add(new Game.HexagonEdge(points[4], points[5], 4));
+            Edges.Add(new Game.HexagonEdge(points[5], points[0], 5));
         }
+
+        public override string ToString() => Position.ToString();
     }
 }

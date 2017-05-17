@@ -6,15 +6,12 @@ using System.Text;
 namespace Catan.Game
 {
     [Serializable]
-    public class Siedlung 
+    public class Siedlung :SpielFigur
     {
-        public HexagonPosition HexagonePosition { set; get; }
-        public int PointIndex { get; private set; }
-        public Siedlung(HexagonPosition HexagonePositionIndex, int pointIndex)
+        public HexagonPoint HexagonPoint { get; private set; }
+        public Siedlung(HexagonPosition hexagonPosition, HexagonPoint hexagonpoint):base(hexagonPosition)
         {
-            KeyValuePair
-            this.PointIndex = pointIndex;
-            this.HexagonePosition = HexagonePosition;
+            this.HexagonPoint = hexagonpoint;
         }
     }
 }

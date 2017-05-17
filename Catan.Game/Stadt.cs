@@ -9,7 +9,7 @@ namespace Catan.Game
     [Serializable]
     public class Stadt : Siedlung
     { 
-        public Stadt(HexagonPosition HexagonePositionIndex, int pointIndex) : base(HexagonePositionIndex,pointIndex)
+        public Stadt(HexagonPosition hexagonePosition, HexagonPoint hexagonPoint) : base(hexagonePosition,hexagonPoint)
         {
         }
     }

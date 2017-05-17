@@ -8,19 +8,12 @@ namespace Catan.Game
     [Serializable]
     public class HexagonPoint
     {
-        public int HexagonGridRowIndex { private set; get; }
-        public int HexagonGridColumnIndex { private set; get; }
-        public HexagonPosition HexagonPosition { private set; get; }
+        public int Index { private set; get; }
+        public HexagonPoint(int index)
+        {
+            this.Index = index;
+        }
 
-        public HexagonPoint(int gridRowIndex, int gridColumnIndex, HexagonPosition hexagonPosition)
-        {
-            this.HexagonGridColumnIndex = gridColumnIndex;
-            this.HexagonGridRowIndex = gridRowIndex;
-            this.HexagonPosition = hexagonPosition;
-        }
-        public bool Equals(HexagonPoint pointB)
-        {
-            return (this.HexagonGridRowIndex == pointB.HexagonGridRowIndex) && (this.HexagonGridColumnIndex == pointB.HexagonGridColumnIndex);
-        }
+        public override string ToString() => $"PointIndex: {Index}";
     }
 }

@@ -20,7 +20,7 @@ namespace Catan.Server.LogicLayer
 
         public GameLogic()
         {
-            ServerFinishedListening(new List<CatanClient>() { new CatanClient(null, null, null) });
+            ServerFinishedListening(new List<CatanClient>() { new CatanClient(null, null, null), new CatanClient(null, null, null) });
 
 
             this.clientFinishedWithFirstTurn = new List<KeyValuePair<int, bool>>();
@@ -49,12 +49,14 @@ namespace Catan.Server.LogicLayer
 
             //currentClient = getNextClient();
 
-            catanClients[0].SpielfigurenContainer.Staedte.Add(new Stadt(new HexagonPosition(0, 0), 1));
+            catanClients[0].SpielfigurenContainer.Staedte.Add(new Stadt(new HexagonPosition(0, 0), new HexagonPoint(1)));
+            catanClients[1].SpielfigurenContainer.Strassen.Add(new Strasse(new HexagonPosition(1, 1), HexagonGrid.Instance.Hexagones[1][1].Edges[0]));
 
 
             currentClient = catanClients[0];
+
+            currentClient.AllowedSiedlungen = getAllowedStaedteByClient(currentClient);
             currentClient.AllowedStaedte = getAllowedStaedteByClient(currentClient);
-            currentClient.AllowedSiedlungen = getAllowedSiedlungenByClient(currentClient);
             currentClient.AllowedStrassen = getAllowedStrassenByClient(currentClient);
 
             GameStateMessage gameState = new GameStateMessage(catanClients, currentClient, HexagonGrid.Instance.Hexagones);
@@ -64,58 +66,103 @@ namespace Catan.Server.LogicLayer
 
         private bool[][][] getAllowedStrassenByClient(CatanClient currentClient)
         {
-            throw new NotImplementedException();
+            bool[][][] allowedStaedte = initilize3DBoolArrayBasedOnHexfields();
+
+            foreach (var stadt in currentClient.SpielfigurenContainer.Staedte)
+            {
+                // neben angrenzende Städte zu bauen, ist erlaubt
+                var gridPoint=HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint);
+                var hexagones = new List<HexagonField>();
+
+                for (int rowIndex = 0; rowIndex < HexagonGrid.Instance.Hexagones.GetLength(0); rowIndex++)
+                {
+                    for (int columnIndex = 0; columnIndex < HexagonGrid.Instance.Hexagones[rowIndex].GetLength(0); columnIndex++)
+                    {
+                        hexagones.Add(HexagonGrid.Instance.Hexagones[rowIndex][columnIndex]);
+                    }
+                }
+
+                var hexagonEdges=HexagonGrid.GetHexagonEdgesByGridIndex(hexagones, gridPoint.Y, gridPoint.X);
+
+            }
+            return allowedStaedte;
         }
 
-        private bool[][][] getAllowedSiedlungenByClient(CatanClient currentClient)
+        private bool[][][] getAllowedStaedteByClient(CatanClient currentClient)
         {
-            throw new NotImplementedException();
-        }
+            var allowedStaedte = initilize3DBoolArrayBasedOnHexfields();
 
-        private bool[][][] getAllowedStaedteByClient(CatanClient client)
+            foreach (var stadt in currentClient.SpielfigurenContainer.Siedlungen)
+            {
+                allowedStaedte[stadt.HexagonPosition.RowIndex][stadt.HexagonPosition.ColumnIndex][stadt.HexagonPoint.Index] = true;
+            }
+
+            return allowedStaedte;
+        }
+        private bool[][][] initilize3DBoolArrayBasedOnHexfields()
         {
             var hexfields = HexagonGrid.Instance.Hexagones;
 
             bool[][][] ob = new bool[hexfields.Length][][];
             for (int rowIndex = 0; rowIndex < hexfields.Length; rowIndex++)
-                ob[rowIndex] = new bool[hexfields[rowIndex].GetLength(0)][];
-
-            for (int rowIndex = 0; rowIndex < ob.GetLength(0); rowIndex++)
             {
+                ob[rowIndex] = new bool[hexfields[rowIndex].GetLength(0)][];
                 for (int columnIndex = 0; columnIndex < ob[rowIndex].GetLength(0); columnIndex++)
                 {
                     ob[rowIndex][columnIndex] = new bool[6];
-                    for (int pointIndex = 0; pointIndex < ob[rowIndex][columnIndex].GetLength(0); pointIndex++)
+                }
+            }
+
+            return ob;
+        }
+        private bool[][][] getAllowedSiedlungenByClient(CatanClient client)
+        {
+            bool[][][] allowedSiedlungen = initilize3DBoolArrayBasedOnHexfields();
+
+            for (int rowIndex = 0; rowIndex < allowedSiedlungen.GetLength(0); rowIndex++)
+            {
+                for (int columnIndex = 0; columnIndex < allowedSiedlungen[rowIndex].GetLength(0); columnIndex++)
+                {
+                    for (int pointIndex = 0; pointIndex < allowedSiedlungen[rowIndex][columnIndex].GetLength(0); pointIndex++)
                     {
-                        var gridColumnIndex = hexfields[rowIndex][columnIndex].Points[pointIndex].HexagonGridColumnIndex;
-                        var gridRowIndex = hexfields[rowIndex][columnIndex].Points[pointIndex].HexagonGridRowIndex;
+                        var gridColumnIndex = HexagonGrid.GetGridPointByHexagonPositionAndPoint(new HexagonPosition(rowIndex, columnIndex), new HexagonPoint(pointIndex)).X;
+                        var gridRowIndex = HexagonGrid.GetGridPointByHexagonPositionAndPoint(new HexagonPosition(rowIndex, columnIndex), new HexagonPoint(pointIndex)).Y;
 
                         var foundHexagones = HexagonGrid.GetHexagonesByGridIndex(gridRowIndex, gridColumnIndex);
                         if (foundHexagones.Count >= 2)
                         {
                             // Stadt darf hier gebaut werden ...
                             // Überprüfen ob andere Spieler was hier haben
-                            var stadtGefunden = catanClients.TrueForAll(_client => _client.SpielfigurenContainer.Staedte.Find
-                              (stadt => stadt.HexagonePosition.ColumnIndex == columnIndex && stadt.HexagonePosition.RowIndex == rowIndex && stadt.PointIndex == pointIndex) != null);
+                            var stadtGefunden = catanClients.TrueForAll(_client => _client.SpielfigurenContainer.Staedte.Find(
+                                stadt => HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint).X == gridColumnIndex &&
+                                HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint).Y == gridRowIndex) != null);
 
                             if (!stadtGefunden)
                             {
                                 // Strassen überprüfen
-                                var foundEdges = HexagonGrid.GetHexagonEdgesByGridIndex(foundHexagones, gridRowIndex, gridColumnIndex);
                                 var otherClients = catanClients.FindAll(_client => _client.ID != currentClient.ID);
-                                
-                                otherClients.Exists(c=>c.SpielfigurenContainer.Strassen.Exists(strasse=>strasse.HexagonEdge.))
-                                ob[rowIndex][columnIndex][pointIndex] = true;
+
+                                foreach (var otherClient in otherClients)
+                                {
+                                    foreach (var strasse in otherClient.SpielfigurenContainer.Strassen)
+                                    {
+                                        var gridPoint_A = HexagonGrid.GetGridPointByHexagonPositionAndPoint(strasse.HexagonPosition, strasse.HexagonEdge.PointA);
+                                        var gridPoint_B = HexagonGrid.GetGridPointByHexagonPositionAndPoint(strasse.HexagonPosition, strasse.HexagonEdge.PointB);
+
+                                        allowedSiedlungen[rowIndex][columnIndex][pointIndex] = !(gridColumnIndex == gridPoint_A.X && gridRowIndex == gridPoint_A.Y) ||
+                                                                                (gridColumnIndex == gridPoint_B.X && gridRowIndex == gridPoint_B.Y);
+                                    }
+                                }
                             }
                             else
                             {
-                                ob[rowIndex][columnIndex][pointIndex] = false;
+                                allowedSiedlungen[rowIndex][columnIndex][pointIndex] = false;
                             }
                         }
                     }
                 }
             }
-            return ob;
+            return allowedSiedlungen;
         }
         public void StartServer()
         {
