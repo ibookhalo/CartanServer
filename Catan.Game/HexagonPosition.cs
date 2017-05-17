@@ -16,5 +16,11 @@ namespace Catan.Game
             this.RowIndex = rowIndex;
             this.ColumnIndex = columnIndex;
         }
+
+        public bool Equals(HexagonPosition hexPosition)
+        {
+            return this.RowIndex == hexPosition.RowIndex && this.ColumnIndex == hexPosition.ColumnIndex;
+        }
+        public override string ToString() => $"RowIndex: {RowIndex}, ColumnIndex: {ColumnIndex}";
     }
 }
