@@ -81,9 +81,10 @@ namespace Catan.Server.LogicLayer
                         {
                             // Stadt darf hier gebaut werden ...
                             // Überprüfen ob andere Spieler was hier haben
-                            var stadtGefunden=!catanClients.TrueForAll(_client => _client.SpielfigurenContainer.Staedte.Find
-                            (stadt => stadt.HexagonePosition.ColumnIndex == columnIndex && stadt.HexagonePosition.RowIndex == rowIndex && stadt.PointIndex == pointIndex) == null);
+                            var stadtGefunden=catanClients.TrueForAll(_client => _client.SpielfigurenContainer.Staedte.Find
+                            (stadt => stadt.HexagonePosition.ColumnIndex == columnIndex && stadt.HexagonePosition.RowIndex == rowIndex && stadt.PointIndex == pointIndex) != null);
 
+   
                         }
                     }
                 }
