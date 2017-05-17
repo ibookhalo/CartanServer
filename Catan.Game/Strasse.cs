@@ -6,14 +6,13 @@ using System.Text;
 namespace Catan.Game
 {
     [Serializable]
-    public class Strasse
+    public class Strasse : SpielFigur
     {
-        public int EdgeIndex { get; set; }
+        public HexagonEdge HexagonEdge { get; set; }
 
-        public Strasse(HexagonPosition hexagonePosition, int edgeIndex)
+        public Strasse(HexagonPosition hexagonePosition, HexagonEdge hexagonEdge) : base(hexagonePosition)
         {
-            this.EdgeIndex = edgeIndex;
+            this.HexagonEdge = hexagonEdge;
         }
-
     }
 }

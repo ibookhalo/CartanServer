@@ -16,12 +16,11 @@ namespace Catan.Server.LogicLayer
         private CatanClient currentClient;
 
         private List<CatanClient> catanClients;
-        private HexagonField[][] hexfields;
         private List<KeyValuePair<int, bool>> clientFinishedWithFirstTurn;
 
         public GameLogic()
         {
-            ServerFinishedListening(new List<CatanClient>() {new CatanClient(null,null,null) });
+            ServerFinishedListening(new List<CatanClient>() { new CatanClient(null, null, null) });
 
 
             this.clientFinishedWithFirstTurn = new List<KeyValuePair<int, bool>>();
@@ -46,25 +45,40 @@ namespace Catan.Server.LogicLayer
             // Let clients play catan !
 
             this.catanClients = catanClients;
-            this.hexfields = RandomHexagonFieldGenerator.Generate();
+
 
             //currentClient = getNextClient();
 
             catanClients[0].SpielfigurenContainer.Staedte.Add(new Stadt(new HexagonPosition(0, 0), 1));
 
-            currentClient.AllowedStaedte = getAllowedStaedteByClient(currentClient);
 
-            GameStateMessage gameState = new GameStateMessage(catanClients, currentClient, this.hexfields);
+            currentClient = catanClients[0];
+            currentClient.AllowedStaedte = getAllowedStaedteByClient(currentClient);
+            currentClient.AllowedSiedlungen = getAllowedSiedlungenByClient(currentClient);
+            currentClient.AllowedStrassen = getAllowedStrassenByClient(currentClient);
+
+            GameStateMessage gameState = new GameStateMessage(catanClients, currentClient, HexagonGrid.Instance.Hexagones);
 
             iNetworkLayer.SendBroadcastMessage(gameState);
         }
 
+        private bool[][][] getAllowedStrassenByClient(CatanClient currentClient)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool[][][] getAllowedSiedlungenByClient(CatanClient currentClient)
+        {
+            throw new NotImplementedException();
+        }
+
         private bool[][][] getAllowedStaedteByClient(CatanClient client)
         {
+            var hexfields = HexagonGrid.Instance.Hexagones;
+
             bool[][][] ob = new bool[hexfields.Length][][];
             for (int rowIndex = 0; rowIndex < hexfields.Length; rowIndex++)
                 ob[rowIndex] = new bool[hexfields[rowIndex].GetLength(0)][];
-
 
             for (int rowIndex = 0; rowIndex < ob.GetLength(0); rowIndex++)
             {
@@ -76,40 +90,33 @@ namespace Catan.Server.LogicLayer
                         var gridColumnIndex = hexfields[rowIndex][columnIndex].Points[pointIndex].HexagonGridColumnIndex;
                         var gridRowIndex = hexfields[rowIndex][columnIndex].Points[pointIndex].HexagonGridRowIndex;
 
-                        var neighborHexagones = getHexagonFieldsByGridRowColumnIndex(gridRowIndex, gridColumnIndex);
-                        if (neighborHexagones.Count>=2)
+                        var foundHexagones = HexagonGrid.GetHexagonesByGridIndex(gridRowIndex, gridColumnIndex);
+                        if (foundHexagones.Count >= 2)
                         {
                             // Stadt darf hier gebaut werden ...
                             // Überprüfen ob andere Spieler was hier haben
-                            var stadtGefunden=catanClients.TrueForAll(_client => _client.SpielfigurenContainer.Staedte.Find
-                            (stadt => stadt.HexagonePosition.ColumnIndex == columnIndex && stadt.HexagonePosition.RowIndex == rowIndex && stadt.PointIndex == pointIndex) != null);
+                            var stadtGefunden = catanClients.TrueForAll(_client => _client.SpielfigurenContainer.Staedte.Find
+                              (stadt => stadt.HexagonePosition.ColumnIndex == columnIndex && stadt.HexagonePosition.RowIndex == rowIndex && stadt.PointIndex == pointIndex) != null);
 
-   
+                            if (!stadtGefunden)
+                            {
+                                // Strassen überprüfen
+                                var foundEdges = HexagonGrid.GetHexagonEdgesByGridIndex(foundHexagones, gridRowIndex, gridColumnIndex);
+                                var otherClients = catanClients.FindAll(_client => _client.ID != currentClient.ID);
+                                
+                                otherClients.Exists(c=>c.SpielfigurenContainer.Strassen.Exists(strasse=>strasse.HexagonEdge.))
+                                ob[rowIndex][columnIndex][pointIndex] = true;
+                            }
+                            else
+                            {
+                                ob[rowIndex][columnIndex][pointIndex] = false;
+                            }
                         }
                     }
                 }
             }
             return ob;
         }
-
-        private List<HexagonField> getHexagonFieldsByGridRowColumnIndex(int gridRowIndex, int gridColumnIndex)
-        {
-            List<HexagonField> matchedHex = new List<HexagonField>();
-            for (int rowIndex = 0; rowIndex < hexfields.Length; rowIndex++)
-            {
-                for (int columnIndex = 0; columnIndex < hexfields[rowIndex].GetLength(0); columnIndex++)
-                {
-                    var currentHexagon = hexfields[rowIndex][columnIndex];
-                    for (int pointIndex = 0; pointIndex < currentHexagon.Points.Count; pointIndex++)
-                    {
-                        if (currentHexagon.Points[pointIndex].HexagonGridColumnIndex == gridColumnIndex && currentHexagon.Points[pointIndex].HexagonGridRowIndex == gridRowIndex)
-                            matchedHex.Add(currentHexagon);
-                    }
-                }
-            }
-            return matchedHex;
-        }
-
         public void StartServer()
         {
             this.iNetworkLayer = new NetworkLayer.CatanServer(1, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 123), "ibo", this);
