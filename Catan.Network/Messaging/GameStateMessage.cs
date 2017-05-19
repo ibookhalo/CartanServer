@@ -12,8 +12,8 @@ namespace Catan.Network.Messaging
     {
         public List<CatanClient> Clients { private set; get; }
         public CatanClient CurrentClient { private set; get; }
-        public HexagonField[][] HexagoneFields { private set; get; }
-        public GameStateMessage(List<CatanClient> clients,CatanClient currentClient, HexagonField[][] hexagoneFields)
+        public Hexagon[][] HexagoneFields { private set; get; }
+        public GameStateMessage(List<CatanClient> clients,CatanClient currentClient, Hexagon[][] hexagoneFields)
         {
             this.Clients = clients;
             this.CurrentClient = currentClient;

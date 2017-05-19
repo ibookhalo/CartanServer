@@ -63,7 +63,6 @@ namespace Catan.Server.LogicLayer
 
             iNetworkLayer.SendBroadcastMessage(gameState);
         }
-
         private bool[][][] getAllowedStrassenByClient(CatanClient currentClient)
         {
             bool[][][] allowedStaedte = initilize3DBoolArrayBasedOnHexfields();
@@ -72,7 +71,7 @@ namespace Catan.Server.LogicLayer
             {
                 // neben angrenzende Städte zu bauen, ist erlaubt
                 var gridPoint=HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint);
-                var hexagones = new List<HexagonField>();
+                var hexagones = new List<Hexagon>();
 
                 for (int rowIndex = 0; rowIndex < HexagonGrid.Instance.Hexagones.GetLength(0); rowIndex++)
                 {
@@ -87,7 +86,6 @@ namespace Catan.Server.LogicLayer
             }
             return allowedStaedte;
         }
-
         private bool[][][] getAllowedStaedteByClient(CatanClient currentClient)
         {
             var allowedStaedte = initilize3DBoolArrayBasedOnHexfields();
@@ -125,17 +123,15 @@ namespace Catan.Server.LogicLayer
                 {
                     for (int pointIndex = 0; pointIndex < allowedSiedlungen[rowIndex][columnIndex].GetLength(0); pointIndex++)
                     {
-                        var gridColumnIndex = HexagonGrid.GetGridPointByHexagonPositionAndPoint(new HexagonPosition(rowIndex, columnIndex), new HexagonPoint(pointIndex)).X;
-                        var gridRowIndex = HexagonGrid.GetGridPointByHexagonPositionAndPoint(new HexagonPosition(rowIndex, columnIndex), new HexagonPoint(pointIndex)).Y;
+                        var currentGridPoint = HexagonGrid.GetGridPointByHexagonPositionAndPoint(new HexagonPosition(rowIndex, columnIndex), new HexagonPoint(pointIndex));
 
-                        var foundHexagones = HexagonGrid.GetHexagonesByGridIndex(gridRowIndex, gridColumnIndex);
+                        var foundHexagones = HexagonGrid.GetHexagonesByGridPoint(currentGridPoint.RowIndex, currentGridPoint.ColumnIndex);
                         if (foundHexagones.Count >= 2)
                         {
                             // Stadt darf hier gebaut werden ...
                             // Überprüfen ob andere Spieler was hier haben
                             var stadtGefunden = catanClients.TrueForAll(_client => _client.SpielfigurenContainer.Staedte.Find(
-                                stadt => HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint).X == gridColumnIndex &&
-                                HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint).Y == gridRowIndex) != null);
+                                stadt => HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint).Equals(currentGridPoint))!=null);
 
                             if (!stadtGefunden)
                             {
@@ -146,11 +142,7 @@ namespace Catan.Server.LogicLayer
                                 {
                                     foreach (var strasse in otherClient.SpielfigurenContainer.Strassen)
                                     {
-                                        var gridPoint_A = HexagonGrid.GetGridPointByHexagonPositionAndPoint(strasse.HexagonPosition, strasse.HexagonEdge.PointA);
-                                        var gridPoint_B = HexagonGrid.GetGridPointByHexagonPositionAndPoint(strasse.HexagonPosition, strasse.HexagonEdge.PointB);
-
-                                        allowedSiedlungen[rowIndex][columnIndex][pointIndex] = !(gridColumnIndex == gridPoint_A.X && gridRowIndex == gridPoint_A.Y) ||
-                                                                                (gridColumnIndex == gridPoint_B.X && gridRowIndex == gridPoint_B.Y);
+                                        allowedSiedlungen[rowIndex][columnIndex][pointIndex] = !HexagonGrid.IsGridPointOnStrasse(strasse, currentGridPoint);
                                     }
                                 }
                             }

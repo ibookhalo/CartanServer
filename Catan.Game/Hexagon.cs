@@ -6,7 +6,7 @@ using System.Text;
 namespace Catan.Game
 {
     [Serializable]
-    public class HexagonField
+    public class Hexagon
     {
         public LandFeld.LandfeldTyp LandfeldTyp { private set; get; }
         public int Nr { private set; get; }
@@ -14,15 +14,14 @@ namespace Catan.Game
         public List<HexagonPoint> Points { private set; get; }
         public List<HexagonEdge> Edges { private set; get; }
 
-        public HexagonField(HexagonPosition position, LandFeld.LandfeldTyp landfeldTyp,int nr,List<HexagonPoint> points)
+        public Hexagon(HexagonPosition position, LandFeld.LandfeldTyp landfeldTyp,int nr,List<HexagonPoint> points)
         {
             this.Position = position;
 
             this.LandfeldTyp = landfeldTyp;
             this.Nr = nr;
             this.Points = points;
-
-
+            
             this.Edges = new List<Game.HexagonEdge>();
             Edges.Add(new Game.HexagonEdge(points[0], points[1], 0));
             Edges.Add(new Game.HexagonEdge(points[1], points[2], 1));

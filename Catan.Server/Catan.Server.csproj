@@ -44,7 +44,9 @@
     <Compile Include="Interfaces\ILogicLayer.cs" />
     <Compile Include="Interfaces\INetworkLayer.cs" />
     <Compile Include="LogicLayer\Bank.cs" />
+    <Compile Include="LogicLayer\GridPoint.cs" />
     <Compile Include="LogicLayer\HexagonGrid.cs" />
+    <Compile Include="LogicLayer\HexagonPositionHexagonEdge.cs" />
     <Compile Include="NetworkLayer\CatanClientDisconnectedException.cs" />
     <Compile Include="NetworkLayer\CatanServer.cs" />
     <Compile Include="LogicLayer\GameLogic.cs" />

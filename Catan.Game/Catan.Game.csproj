@@ -42,8 +42,8 @@
   <ItemGroup>
     <Compile Include="CatanClient.cs" />
     <Compile Include="HexagonEdge.cs" />
-    <Compile Include="HexagonField.cs" />
-    <Compile Include="HexagonFieldHexagonEdge.cs" />
+    <Compile Include="Hexagon.cs" />
+    <Compile Include="HexagonPositionHexagonEdge.cs" />
     <Compile Include="HexagonPoint.cs" />
     <Compile Include="HexagonPosition.cs" />
     <Compile Include="KartenContainer.cs" />
@@ -55,9 +55,6 @@
     <Compile Include="Stadt.cs" />
     <Compile Include="Strasse.cs" />
     <Compile Include="Wuerfel.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

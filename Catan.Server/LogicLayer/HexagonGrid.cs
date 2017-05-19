@@ -11,7 +11,7 @@ namespace Catan.Server.LogicLayer
     class HexagonGrid
     {
         private static HexagonGrid instance;
-        public HexagonField[][] Hexagones;
+        public Hexagon[][] Hexagones;
         private HexagonGrid()
         {
             generateHexagonGrid();
@@ -73,16 +73,16 @@ namespace Catan.Server.LogicLayer
             }
             return randomLandFieldTypes.ToArray();
         }
-        public static Point GetGridPointByHexagonPositionAndPoint(HexagonPosition hexagonPosition, HexagonPoint hexPoint)
+        public static GridPoint GetGridPointByHexagonPositionAndPoint(HexagonPosition hexagonPosition, HexagonPoint hexPoint)
         {
-            Point pointIndexTest = new Point(); // point index 0
+            GridPoint pointIndexTest = null; // point index 0
             switch (hexagonPosition.RowIndex)
             {
-                case 0: pointIndexTest = new Point(3, hexagonPosition.RowIndex * 2); break;
-                case 1: pointIndexTest = new Point(2, hexagonPosition.RowIndex * 2); break;
-                case 2: pointIndexTest = new Point(1, hexagonPosition.RowIndex * 2); break;
-                case 3: pointIndexTest = new Point(2, hexagonPosition.RowIndex * 2); break;
-                case 4: pointIndexTest = new Point(3, hexagonPosition.RowIndex * 2); break;
+                case 0: pointIndexTest = new GridPoint(3, hexagonPosition.RowIndex * 2); break;
+                case 1: pointIndexTest = new GridPoint(2, hexagonPosition.RowIndex * 2); break;
+                case 2: pointIndexTest = new GridPoint(1, hexagonPosition.RowIndex * 2); break;
+                case 3: pointIndexTest = new GridPoint(2, hexagonPosition.RowIndex * 2); break;
+                case 4: pointIndexTest = new GridPoint(3, hexagonPosition.RowIndex * 2); break;
                 default:
                     throw new NotImplementedException($"getGridPointByHexagonRowIndexColumnIndex ");
             }
@@ -114,12 +114,12 @@ namespace Catan.Server.LogicLayer
 
 
             // 7 Rows
-            Hexagones = new HexagonField[5][];
-            Hexagones[0] = new HexagonField[3]; // Row 0, Columns 3
-            Hexagones[1] = new HexagonField[4];
-            Hexagones[2] = new HexagonField[5];
-            Hexagones[3] = new HexagonField[4];
-            Hexagones[4] = new HexagonField[3];
+            Hexagones = new Hexagon[5][];
+            Hexagones[0] = new Hexagon[3]; // Row 0, Columns 3
+            Hexagones[1] = new Hexagon[4];
+            Hexagones[2] = new Hexagon[5];
+            Hexagones[3] = new Hexagon[4];
+            Hexagones[4] = new Hexagon[3];
 
             int count = 0;
             for (int rowIndex = 0; rowIndex < Hexagones.GetLength(0); rowIndex++)
@@ -134,31 +134,29 @@ namespace Catan.Server.LogicLayer
                         points[pointIndex] = new HexagonPoint(pointIndex);
                     }
 
-                    Hexagones[rowIndex][columnIndex] = new HexagonField(hexPosition, randomHexagonFieldTypes[count], nrChips[count], points.ToList());
+                    Hexagones[rowIndex][columnIndex] = new Hexagon(hexPosition, randomHexagonFieldTypes[count], nrChips[count], points.ToList());
                     count++;
                 }
             }
         }
-        public static List<HexagonFieldHexagonEdge> GetHexagonEdgesByGridIndex(List<HexagonField> hexagones, int gridHexRow, int gridHexColumn)
+        public static List<HexagonPositionHexagonEdge> GetHexagonEdgesByGridPoint(List<Hexagon> hexagones, GridPoint gridPoint)
         {
-            List<HexagonFieldHexagonEdge> hexFieldEdge = new List<HexagonFieldHexagonEdge>();
-            foreach (HexagonField currentHex in hexagones)
+            List<HexagonPositionHexagonEdge> hexFieldEdge = new List<HexagonPositionHexagonEdge>();
+            foreach (Hexagon currentHex in hexagones)
             {
                 foreach (HexagonEdge currentEdge in currentHex.Edges)
                 {
-                    var gridPoint_A =GetGridPointByHexagonPositionAndPoint(currentHex.Position, currentEdge.PointA);
-                    var gridPoint_B = GetGridPointByHexagonPositionAndPoint(currentHex.Position, currentEdge.PointB);
-                    if ((gridPoint_A.X == gridHexColumn && gridPoint_A.Y == gridHexRow) || (gridPoint_B.X == gridHexColumn && gridPoint_B.Y == gridHexRow))
-                        hexFieldEdge.Add(new HexagonFieldHexagonEdge(currentHex, currentEdge));
+                    if (IsGridPointOnHexagonEdge(currentHex.Position, currentEdge, gridPoint))
+                        hexFieldEdge.Add(new HexagonPositionHexagonEdge(currentHex.Position, currentEdge));
                 }
             }
             return hexFieldEdge.ToList();
         }
-        public static List<HexagonField> GetHexagonesByGridIndex(int gridRowIndex, int gridColumnIndex)
+        public static List<Hexagon> GetHexagonesByGridPoint(GridPoint gridPoint)
         {
             var hexfields = Instance.Hexagones;
 
-            List<HexagonField> matchedHex = new List<HexagonField>();
+            List<Hexagon> matchedHex = new List<Hexagon>();
             for (int rowIndex = 0; rowIndex < hexfields.Length; rowIndex++)
             {
                 for (int columnIndex = 0; columnIndex < hexfields[rowIndex].GetLength(0); columnIndex++)
@@ -166,16 +164,23 @@ namespace Catan.Server.LogicLayer
                     var currentHexagon = hexfields[rowIndex][columnIndex];
                     for (int pointIndex = 0; pointIndex < currentHexagon.Points.Count; pointIndex++)
                     {
-                        var _gridColumnIndex=GetGridPointByHexagonPositionAndPoint(hexfields[rowIndex][columnIndex].Position, new HexagonPoint(pointIndex)).X;
-                        var _gridRowIndex = GetGridPointByHexagonPositionAndPoint(hexfields[rowIndex][columnIndex].Position, new HexagonPoint(pointIndex)).Y;
-
-                        if (_gridColumnIndex == gridColumnIndex && _gridRowIndex == gridRowIndex)
+                        if (GetGridPointByHexagonPositionAndPoint(hexfields[rowIndex][columnIndex].Position, new HexagonPoint(pointIndex)).Equals(gridPoint))
                             matchedHex.Add(currentHexagon);
                     }
                 }
             }
             return matchedHex;
         }
+        public static bool IsGridPointOnStrasse(Strasse strasse,GridPoint gridPoint)
+        {
+            return IsGridPointOnHexagonEdge(strasse.HexagonPosition, strasse.HexagonEdge, gridPoint);
+        }
 
+        public static bool IsGridPointOnHexagonEdge(HexagonPosition hexagonPosition,HexagonEdge hexagonEdge, GridPoint gridPoint)
+        {
+            return HexagonGrid.GetGridPointByHexagonPositionAndPoint(hexagonPosition, hexagonEdge.PointA).Equals(gridPoint) ||
+                   HexagonGrid.GetGridPointByHexagonPositionAndPoint(hexagonPosition, hexagonEdge.PointB).Equals(gridPoint);
+
+        }
     }
 }

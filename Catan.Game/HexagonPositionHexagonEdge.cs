@@ -5,12 +5,12 @@ using System.Text;
 
 namespace Catan.Game
 {
-    public class HexagonFieldHexagonEdge
+    public class HexagonPositionHexagonEdge
     {
         public HexagonEdge Edge { private set; get; }
-        public HexagonField Hexagon { private set; get; }
+        public Hexagon Hexagon { private set; get; }
 
-        public HexagonFieldHexagonEdge(HexagonField hexagonField, HexagonEdge hexagonEdge)
+        public HexagonPositionHexagonEdge(Hexagon hexagonField, HexagonEdge hexagonEdge)
         {
             this.Hexagon = hexagonField;
             this.Edge = hexagonEdge;
