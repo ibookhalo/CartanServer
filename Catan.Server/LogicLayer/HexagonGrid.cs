@@ -11,7 +11,22 @@ namespace Catan.Server.LogicLayer
     class HexagonGrid
     {
         private static HexagonGrid instance;
-        public Hexagon[][] Hexagones;
+        public Hexagon[][] Hexagones { private set; get; }
+        public List<Hexagon> HexagonesList
+        { get
+            {
+                var hexagones = new List<Hexagon>();
+
+                for (int rowIndex = 0; rowIndex < HexagonGrid.Instance.Hexagones.GetLength(0); rowIndex++)
+                {
+                    for (int columnIndex = 0; columnIndex < HexagonGrid.Instance.Hexagones[rowIndex].GetLength(0); columnIndex++)
+                    {
+                        hexagones.Add(HexagonGrid.Instance.Hexagones[rowIndex][columnIndex]);
+                    }
+                }
+                return hexagones;
+            }
+        }
         private HexagonGrid()
         {
             generateHexagonGrid();
