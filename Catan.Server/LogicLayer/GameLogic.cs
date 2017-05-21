@@ -59,7 +59,7 @@ namespace Catan.Server.LogicLayer
             currentClient.AllowedSiedlungen = getAllowedSiedlungenByClient(currentClient);
             currentClient.AllowedStaedte = getAllowedStaedteByClient(currentClient);
             currentClient.AllowedStrassen = getAllowedStrassenByClient(currentClient);
-
+            
             GameStateMessage gameState = new GameStateMessage(catanClients, currentClient, HexagonGrid.Instance.Hexagones);
 
             iNetworkLayer.SendBroadcastMessage(gameState);
