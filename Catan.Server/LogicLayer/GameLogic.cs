@@ -49,8 +49,8 @@ namespace Catan.Server.LogicLayer
 
             //currentClient = getNextClient();
 
-            catanClients[0].SpielfigurenContainer.Siedlungen.Add(new Siedlung(new HexagonPosition(0, 0), new HexagonPoint(1)));
-            catanClients[0].SpielfigurenContainer.Strassen.Add(new Strasse(new HexagonPosition(0, 1), new HexagonEdge(new HexagonPoint(5),new HexagonPoint(4),4)));
+            catanClients[0].SpielfigurenContainer.Siedlungen.Add(new Siedlung(new HexagonPosition(0, 1), new HexagonPoint(5)));
+            catanClients[0].SpielfigurenContainer.Strassen.Add(new Strasse(new HexagonPosition(0, 1), new HexagonEdge(new HexagonPoint(5), new HexagonPoint(4), 4)));
 
             //catanClients[1].SpielfigurenContainer.Siedlungen.Add(new Siedlung(new HexagonPosition(1,0), new HexagonPoint(0)));
 
@@ -73,12 +73,12 @@ namespace Catan.Server.LogicLayer
             // Siedlungen
             foreach (var siedlung in currentClient.SpielfigurenContainer.Siedlungen)
             {
-                var hexPosEdges=HexagonGrid.GetHexagonEdgesByGridPoint(HexagonGrid.Instance.HexagonesList, HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint));
+                var hexPosEdges = HexagonGrid.GetHexagonEdgesByGridPoint(HexagonGrid.Instance.HexagonesList, HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint));
                 foreach (var hexPosEdge in hexPosEdges)
                 {
-                    allowedStrassen[hexPosEdge.HexagonPosition.RowIndex][hexPosEdge.HexagonPosition.ColumnIndex][hexPosEdge.HexagonEdge.Index]=
-                    currentClient.SpielfigurenContainer.Strassen.Find(strasse => 
-                    HexagonGrid.IsHexagonEdgeOnHexagonEdge(hexPosEdge,new HexagonPositionHexagonEdge(strasse.HexagonPosition,strasse.HexagonEdge)))==null;
+                    allowedStrassen[hexPosEdge.HexagonPosition.RowIndex][hexPosEdge.HexagonPosition.ColumnIndex][hexPosEdge.HexagonEdge.Index] =
+                    currentClient.SpielfigurenContainer.Strassen.Find(strasse =>
+                    HexagonGrid.IsHexagonEdgeOnHexagonEdge(hexPosEdge, new HexagonPositionHexagonEdge(strasse.HexagonPosition, strasse.HexagonEdge))) == null;
                 }
             }
             // Städte
@@ -105,36 +105,12 @@ namespace Catan.Server.LogicLayer
                 var hexagonesA = HexagonGrid.GetHexagonesByGridPoint(gridPointA);
                 var hexagonesB = HexagonGrid.GetHexagonesByGridPoint(gridPointB);
 
-                var edgesA=HexagonGrid.GetHexagonEdgesByGridPoint(hexagonesA, gridPointA).Where(hexPosEdge=> 
-                {
+                var isGridPointABlocked = currentClient.SpielfigurenContainer.Siedlungen.Find(siedlung =>
+                  HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint).Equals(gridPointA)) != null;
 
-                    HexagonGrid.GetGridPointByHexagonPositionAndPoint(hexPosEdge.HexagonPosition, hexPosEdge.HexagonEdge.PointA).Equals(gridPointA);
-                }
+                var isGridPointBBlocked = currentClient.SpielfigurenContainer.Siedlungen.Find(siedlung =>
+                  HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint).Equals(gridPointB)) != null;
 
-
-                var edgesB = HexagonGrid.GetHexagonEdgesByGridPoint(hexagonesB, gridPointB);
-
-
-
-
-                var otherClients=catanClients.FindAll(client => client.ID != currentClient.ID);
-                foreach (var otherClient in otherClients)
-                {
-                    otherClient.SpielfigurenContainer.
-                }
-
-
-
-
-
-
-
-
-
-                foreach (var hex in hexagones)
-                {
-                    hex.
-                }
 
             }
 
@@ -175,7 +151,7 @@ namespace Catan.Server.LogicLayer
             foreach (var siedlung in currentClient.SpielfigurenContainer.Siedlungen)
             {
                 var gridPoint = HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint);
-                foreach (var hexPosEdge in HexagonGrid.GetHexagonEdgesByGridPoint(HexagonGrid.GetHexagonesByGridPoint(gridPoint),gridPoint))
+                foreach (var hexPosEdge in HexagonGrid.GetHexagonEdgesByGridPoint(HexagonGrid.GetHexagonesByGridPoint(gridPoint), gridPoint))
                 {
                     if (currentClient.SpielfigurenContainer.Strassen.Find(strasse =>
                         HexagonGrid.IsHexagonEdgeOnHexagonEdge(hexPosEdge, new HexagonPositionHexagonEdge(strasse.HexagonPosition, strasse.HexagonEdge))) != null)
@@ -222,10 +198,10 @@ namespace Catan.Server.LogicLayer
                             #region Überprüfen, ob es hier eine Stadt oder Siedlung gibt
 
                             var stadtGefunden = catanClients.Exists(_client => _client.SpielfigurenContainer.Staedte.Find(
-                                stadt => HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint).Equals(currentGridPoint))!=null);
+                                stadt => HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint).Equals(currentGridPoint)) != null);
 
                             var siedlungGefunden = catanClients.Exists(_client => _client.SpielfigurenContainer.Siedlungen.Find(
-                                siedlung=> HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint).Equals(currentGridPoint)) != null);
+                                siedlung => HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint).Equals(currentGridPoint)) != null);
 
                             #endregion
 
@@ -233,17 +209,17 @@ namespace Catan.Server.LogicLayer
                             {
                                 #region Überprüfen, ob die drei angrenzenden Kreuzungen von Siedlungen oder Städten besetzt sind
 
-                                allowedSiedlungen[rowIndex][columnIndex][pointIndex]=catanClients.Find(_client =>
+                                allowedSiedlungen[rowIndex][columnIndex][pointIndex] = catanClients.Find(_client =>
 
-                                _client.SpielfigurenContainer.Siedlungen.Find(siedlung =>
-                                HexagonGrid.GetHexagonEdgesByGridPoint(foundHexagones, currentGridPoint).Find(hex =>
-                                HexagonGrid.IsGridPointOnHexagonEdge(hex.HexagonPosition, hex.HexagonEdge,
-                                HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint)))!=null)!=null ||
+                                  _client.SpielfigurenContainer.Siedlungen.Find(siedlung =>
+                                  HexagonGrid.GetHexagonEdgesByGridPoint(foundHexagones, currentGridPoint).Find(hex =>
+                                  HexagonGrid.IsGridPointOnHexagonEdge(hex.HexagonPosition, hex.HexagonEdge,
+                                  HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint))) != null) != null ||
 
-                                 _client.SpielfigurenContainer.Staedte.Find(stadt =>
-                                HexagonGrid.GetHexagonEdgesByGridPoint(foundHexagones, currentGridPoint).Find(hex =>
-                                HexagonGrid.IsGridPointOnHexagonEdge(hex.HexagonPosition, hex.HexagonEdge,
-                                HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint))) != null)!=null) ==null;
+                                   _client.SpielfigurenContainer.Staedte.Find(stadt =>
+                                  HexagonGrid.GetHexagonEdgesByGridPoint(foundHexagones, currentGridPoint).Find(hex =>
+                                  HexagonGrid.IsGridPointOnHexagonEdge(hex.HexagonPosition, hex.HexagonEdge,
+                                  HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint))) != null) != null) == null;
 
                                 #endregion
                             }
