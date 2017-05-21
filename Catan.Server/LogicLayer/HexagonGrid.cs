@@ -13,7 +13,8 @@ namespace Catan.Server.LogicLayer
         private static HexagonGrid instance;
         public Hexagon[][] Hexagones { private set; get; }
         public List<Hexagon> HexagonesList
-        { get
+        {
+            get
             {
                 var hexagones = new List<Hexagon>();
 
@@ -87,6 +88,16 @@ namespace Catan.Server.LogicLayer
                 }
             }
             return randomLandFieldTypes.ToArray();
+        }
+        public static bool IsHexagonEdgeOnHexagonEdge(HexagonPositionHexagonEdge hexagonPositionHexagonEdge1, HexagonPositionHexagonEdge hexagonPositionHexagonEdge2)
+        {
+            var gridPoint1_A = GetGridPointByHexagonPositionAndPoint(hexagonPositionHexagonEdge1.HexagonPosition, hexagonPositionHexagonEdge1.HexagonEdge.PointA);
+            var gridPoint1_B = GetGridPointByHexagonPositionAndPoint(hexagonPositionHexagonEdge1.HexagonPosition, hexagonPositionHexagonEdge1.HexagonEdge.PointB);
+
+            var gridPoint2_A = GetGridPointByHexagonPositionAndPoint(hexagonPositionHexagonEdge2.HexagonPosition, hexagonPositionHexagonEdge2.HexagonEdge.PointA);
+            var gridPoint2_B = GetGridPointByHexagonPositionAndPoint(hexagonPositionHexagonEdge2.HexagonPosition, hexagonPositionHexagonEdge2.HexagonEdge.PointB);
+
+            return (gridPoint1_A.Equals(gridPoint2_A) && gridPoint1_B.Equals(gridPoint2_B))  || (gridPoint1_A.Equals(gridPoint2_B) && gridPoint1_B.Equals(gridPoint2_A));
         }
         public static GridPoint GetGridPointByHexagonPositionAndPoint(HexagonPosition hexagonPosition, HexagonPoint hexPoint)
         {
@@ -186,12 +197,11 @@ namespace Catan.Server.LogicLayer
             }
             return matchedHex;
         }
-        public static bool IsGridPointOnStrasse(Strasse strasse,GridPoint gridPoint)
+        public static bool IsGridPointOnStrasse(Strasse strasse, GridPoint gridPoint)
         {
             return IsGridPointOnHexagonEdge(strasse.HexagonPosition, strasse.HexagonEdge, gridPoint);
         }
-
-        public static bool IsGridPointOnHexagonEdge(HexagonPosition hexagonPosition,HexagonEdge hexagonEdge, GridPoint gridPoint)
+        public static bool IsGridPointOnHexagonEdge(HexagonPosition hexagonPosition, HexagonEdge hexagonEdge, GridPoint gridPoint)
         {
             return HexagonGrid.GetGridPointByHexagonPositionAndPoint(hexagonPosition, hexagonEdge.PointA).Equals(gridPoint) ||
                    HexagonGrid.GetGridPointByHexagonPositionAndPoint(hexagonPosition, hexagonEdge.PointB).Equals(gridPoint);
