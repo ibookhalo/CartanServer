@@ -32,6 +32,7 @@ namespace Catan.Network.Messaging
             {
                 TcpClient.SendBufferSize = NetworkMessage.MAX_DATA_SIZE_IN_BYTES;
                 byte[] buffer = new NetworkMessageFormatter<NetworkMessage>().Serialize(netMessage);
+
                 netStream = TcpClient.GetStream();
                 netStream.BeginWrite(buffer, 0, buffer.Length, writeCallback,netMessage);
             }

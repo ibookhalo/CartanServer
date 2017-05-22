@@ -1,6 +1,7 @@
 ﻿
 using Catan.Server;
 using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace Catan
@@ -10,6 +11,8 @@ namespace Catan
     
         static void Main(string[] args)
         {
+           
+
             Catan.Server.LogicLayer.GameLogic lo = new Server.LogicLayer.GameLogic();
             lo.StartServer();
         }

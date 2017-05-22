@@ -8,14 +8,15 @@ namespace Catan.Network.Messaging
     public class CatanClientStateChangeMessage:NetworkMessage
     { 
         public List<SpielFigur> NewSpielFiguren { private set; get; }
-        public List<Bankhandle> Bankhandles { private set; get; }
-
+        public List<Bankhandle> NewBankhandles { private set; get; }
+        public List<KartenContainer.Entwicklungskarte> NewEntwicklungskarten { private set; get; }
         public int ClientID { get;private set; }
 
-        public CatanClientStateChangeMessage(List<SpielFigur> newSpielFiguren, List<Bankhandle> bankhandles,int clientID)
+        public CatanClientStateChangeMessage(List<SpielFigur> newSpielFiguren,List<KartenContainer.Entwicklungskarte> newEntwicklungskarten, List<Bankhandle> bankhandles,int clientID)
         {
             this.NewSpielFiguren = newSpielFiguren;
-            this.Bankhandles = bankhandles;
+            this.NewBankhandles = bankhandles;
+            this.NewEntwicklungskarten = newEntwicklungskarten;
             this.ClientID = clientID;
         }
         

@@ -14,16 +14,15 @@ namespace Catan.Server.LogicLayer
     {
         private Interfaces.INetworkLayer iNetworkLayer;
         private CatanClient currentClient;
+        private CatanClientMessageHandler messageHandler;
 
         private List<CatanClient> catanClients;
-        private List<KeyValuePair<int, bool>> clientFinishedWithFirstTurn;
 
         public GameLogic()
         {
-            ServerFinishedListening(new List<CatanClient>() { new CatanClient(null, null, null), new CatanClient(null, null, null) });
+            this.catanClients = new List<CatanClient>();
 
-
-            this.clientFinishedWithFirstTurn = new List<KeyValuePair<int, bool>>();
+            this.messageHandler = new LogicLayer.CatanClientMessageHandler();
         }
 
         private CatanClient getNextClient()
@@ -43,24 +42,17 @@ namespace Catan.Server.LogicLayer
         public void ServerFinishedListening(List<CatanClient> catanClients)
         {
             // Let clients play catan !
+            this.catanClients.Clear();
+            this.catanClients.AddRange(catanClients);
 
-            this.catanClients = catanClients;
-
-
-            //currentClient = getNextClient();
-
-            catanClients[0].SpielfigurenContainer.Siedlungen.Add(new Siedlung(new HexagonPosition(0, 1), new HexagonPoint(5)));
-            catanClients[0].SpielfigurenContainer.Strassen.Add(new Strasse(new HexagonPosition(0, 1), new HexagonEdge(new HexagonPoint(5), new HexagonPoint(4), 4)));
-
-            //catanClients[1].SpielfigurenContainer.Siedlungen.Add(new Siedlung(new HexagonPosition(1,0), new HexagonPoint(0)));
-
-            currentClient = catanClients[0];
+            currentClient = getNextClient();
 
             currentClient.AllowedSiedlungen = getAllowedSiedlungenByClient(currentClient);
             currentClient.AllowedStaedte = getAllowedStaedteByClient(currentClient);
             currentClient.AllowedStrassen = getAllowedStrassenByClient(currentClient);
-            
+
             GameStateMessage gameState = new GameStateMessage(catanClients, currentClient, HexagonGrid.Instance.Hexagones);
+           
 
             iNetworkLayer.SendBroadcastMessage(gameState);
         }
@@ -77,7 +69,7 @@ namespace Catan.Server.LogicLayer
                 foreach (var hexPosEdge in hexPosEdges)
                 {
                     allowedStrassen[hexPosEdge.HexagonPosition.RowIndex][hexPosEdge.HexagonPosition.ColumnIndex][hexPosEdge.HexagonEdge.Index] =
-                    currentClient.SpielfigurenContainer.Strassen.Find(strasse =>
+                    currentClient.SpielfigurenContainer.Strassen.Find(strasse => 
                     HexagonGrid.IsHexagonEdgeOnHexagonEdge(hexPosEdge, new HexagonPositionHexagonEdge(strasse.HexagonPosition, strasse.HexagonEdge))) == null;
                 }
             }
@@ -95,53 +87,28 @@ namespace Catan.Server.LogicLayer
 
             #endregion
 
-            #region An den eigenen Straßen dürfen Straßen gebaut werden
+            #region An den eigenen Straßen dürfen Straßen gebaut werden und auf der keine fremde Siedlung oder Stadt steht
 
             foreach (var strasse in currentClient.SpielfigurenContainer.Strassen)
             {
+
                 var gridPointA = HexagonGrid.GetGridPointByHexagonPositionAndPoint(strasse.HexagonPosition, strasse.HexagonEdge.PointA);
                 var gridPointB = HexagonGrid.GetGridPointByHexagonPositionAndPoint(strasse.HexagonPosition, strasse.HexagonEdge.PointB);
 
-                var hexagonesA = HexagonGrid.GetHexagonesByGridPoint(gridPointA);
-                var hexagonesB = HexagonGrid.GetHexagonesByGridPoint(gridPointB);
+                foreach (var allowedGridPoint in new List<GridPoint>() {gridPointA,gridPointB })
+                {
+                    foreach (var allowedHexagonEdge in HexagonGrid.GetHexagonEdgesByGridPoint(HexagonGrid.Instance.HexagonesList, allowedGridPoint).Where(hexPosEdge =>
+                              catanClients.Find(client => client.SpielfigurenContainer.Strassen.Find(_strasse =>
+                              HexagonGrid.IsHexagonEdgeOnHexagonEdge(hexPosEdge, new HexagonPositionHexagonEdge(_strasse.HexagonPosition, _strasse.HexagonEdge))) != null) == null).ToList())
 
-                var isGridPointABlocked = currentClient.SpielfigurenContainer.Siedlungen.Find(siedlung =>
-                  HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint).Equals(gridPointA)) != null;
-
-                var isGridPointBBlocked = currentClient.SpielfigurenContainer.Siedlungen.Find(siedlung =>
-                  HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint).Equals(gridPointB)) != null;
-
-
+                    {
+                        allowedStrassen[allowedHexagonEdge.HexagonPosition.RowIndex][allowedHexagonEdge.HexagonPosition.ColumnIndex][allowedHexagonEdge.HexagonEdge.Index] = true;
+                    }
+                }
             }
 
             #endregion
-            /*
-            var otherClients = catanClients.FindAll(_client => _client.ID != currentClient.ID);
-            foreach (var otherClient in otherClients)
-            {
-                foreach (var otherClientSiedlung in otherClient.SpielfigurenContainer.Siedlungen)
-                {
-                    foreach (var hexPosEdge in hexagonsPositionHexagonEdge)
-                    {
-                        allowedStrassen[hexPosEdge.HexagonPosition.RowIndex][hexPosEdge.HexagonPosition.ColumnIndex][hexPosEdge.HexagonEdge.Index]
-                            = !HexagonGrid.IsGridPointOnHexagonEdge(hexPosEdge.HexagonPosition, hexPosEdge.HexagonEdge,
-                        HexagonGrid.GetGridPointByHexagonPositionAndPoint(otherClientSiedlung.HexagonPosition, otherClientSiedlung.HexagonPoint));
-                    }
-                }
 
-                foreach (var otherClientStadt in otherClient.SpielfigurenContainer.Staedte)
-                {
-                    foreach (var hexPosEdge in hexagonsPositionHexagonEdge)
-                    {
-                        if (allowedStrassen[hexPosEdge.HexagonPosition.RowIndex][hexPosEdge.HexagonPosition.ColumnIndex][hexPosEdge.HexagonEdge.Index])
-                        {
-                            allowedStrassen[hexPosEdge.HexagonPosition.RowIndex][hexPosEdge.HexagonPosition.ColumnIndex][hexPosEdge.HexagonEdge.Index]
-                            = !HexagonGrid.IsGridPointOnHexagonEdge(hexPosEdge.HexagonPosition, hexPosEdge.HexagonEdge,
-                               HexagonGrid.GetGridPointByHexagonPositionAndPoint(otherClientStadt.HexagonPosition, otherClientStadt.HexagonPoint));
-                        }
-                    }
-                }
-            }*/
             return allowedStrassen;
         }
         private bool[][][] getAllowedStaedteByClient(CatanClient currentClient)
@@ -240,10 +207,11 @@ namespace Catan.Server.LogicLayer
         }
         public void ClientGameStateChangeMessageReceived(CatanClientStateChangeMessage catanClientStateChangeMessage)
         {
-            /*if (clientFinishedWithFirstTurn.Exists(client=>client.Key==catanClientStateChangeMessage.)
-            {
-             
-            }*/
+            CatanClient catanClient = catanClients.Find(client => client.ID == catanClientStateChangeMessage.ClientID);
+            if (catanClient == null)
+                new NullReferenceException("ClientGameStateChangeMessageReceived");
+
+            this.messageHandler.Handle(catanClient,catanClientStateChangeMessage);
         }
     }
 }
