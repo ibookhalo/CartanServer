@@ -197,10 +197,6 @@ namespace Catan.Server.LogicLayer
             }
             return matchedHex;
         }
-        public static bool IsGridPointOnStrasse(Strasse strasse, GridPoint gridPoint)
-        {
-            return IsGridPointOnHexagonEdge(strasse.HexagonPosition, strasse.HexagonEdge, gridPoint);
-        }
         public static bool IsGridPointOnHexagonEdge(HexagonPosition hexagonPosition, HexagonEdge hexagonEdge, GridPoint gridPoint)
         {
             return HexagonGrid.GetGridPointByHexagonPositionAndPoint(hexagonPosition, hexagonEdge.PointA).Equals(gridPoint) ||
