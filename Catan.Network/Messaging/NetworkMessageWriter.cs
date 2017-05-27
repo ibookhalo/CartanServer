@@ -26,6 +26,10 @@ namespace Catan.Network.Messaging
             this.TcpClient = tcpClient;
         }
 
+        public void Stop()
+        {
+            this.netStream?.Dispose();
+        }
         public void WriteAsync(NetworkMessage netMessage)
         {
             try

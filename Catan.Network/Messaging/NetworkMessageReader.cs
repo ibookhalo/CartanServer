@@ -26,6 +26,10 @@ namespace Catan.Network.Messaging
             this.TcpClient = tcpClient;
         }
 
+        public void Stop()
+        {
+            netStream?.Close();
+        }
         public void ReadAsync(bool readLoop = false)
         {
             try
