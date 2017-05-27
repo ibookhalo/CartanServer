@@ -196,7 +196,7 @@ namespace Catan.Server.NetworkLayer
             }
             catch (CatanClientDisconnectedException ex)
             {
-                iLogicLayer.ClientDisconnected();
+               
             }
             catch (Exception ex)
             {
