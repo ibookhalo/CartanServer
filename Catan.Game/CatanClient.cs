@@ -20,8 +20,6 @@ namespace Catan.Game
         private TcpClient tcpClient;
         public TcpClient TcpClient { get { return tcpClient; }}
         public string IPAddressPortNr { get; private set; }
-        public int Port { get; private set; }
-
         // Spielfiguren
         public SpielFigurenContainer SpielfigurenContainer { private set; get; }
 
@@ -39,7 +37,6 @@ namespace Catan.Game
         public bool[][][] AllowedStaedte { get; set; }
         public bool[][][] AllowedSiedlungen { get; set; }
         public bool[][][] AllowedStrassen { get; set; }
-
         public CatanClient(TcpClient tcpClient,string IpAddressPortNr, string name)
         {
             this.tcpClient = tcpClient;
