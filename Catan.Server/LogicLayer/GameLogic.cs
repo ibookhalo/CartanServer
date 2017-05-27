@@ -213,5 +213,10 @@ namespace Catan.Server.LogicLayer
 
             this.messageHandler.Handle(catanClient,catanClientStateChangeMessage);
         }
+
+        public void ThrowException(Exception ex)
+        {
+            
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace Catan.Server.Interfaces
         void StartServer();
         void ServerFinishedListening(List<CatanClient> catanClients);
         void ClientGameStateChangeMessageReceived(CatanClientStateChangeMessage catanClientStateChangeMessage);
+        void ThrowException(Exception ex);
     }
 }

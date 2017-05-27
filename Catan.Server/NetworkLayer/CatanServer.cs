@@ -18,16 +18,16 @@ namespace Catan.Server.NetworkLayer
 {
     public class CatanServer:Interfaces.INetworkLayer
     {
-        private Interfaces.ILogicLayer logicLayer;
+        private Interfaces.ILogicLayer iLogicLayer;
 
         private TcpListener tcpListener;
         private List<CatanClient> catanClients;
-        private ushort maxClients;
+        private int maxClients;
         private string authPassword;
 
-        public CatanServer(ushort maxClients, IPEndPoint ipEndPoint, string authPassword, Interfaces.ILogicLayer logicLayer)
+        public CatanServer(int maxClients, IPEndPoint ipEndPoint, string authPassword, Interfaces.ILogicLayer iLogicLayer)
         {
-            this.logicLayer = logicLayer;
+            this.iLogicLayer = iLogicLayer;
 
             this.tcpListener = new TcpListener(ipEndPoint);
             this.catanClients = new List<CatanClient>();
@@ -43,7 +43,7 @@ namespace Catan.Server.NetworkLayer
                 tcpListener.Start();
                 while (true)
                 {
-                    var netMessageReader = new NetworkMessageReader(tcpListener.AcceptTcpClient());
+                    NetworkMessageReader netMessageReader = new NetworkMessageReader(tcpListener.AcceptTcpClient());
 
                     netMessageReader.ReadCompleted += NetMessageReader_CatanClientAuth_Request_ReadCompleted;
                     netMessageReader.ReadError += (obj, e) => { e.TcpClient.Close(); };
@@ -57,10 +57,14 @@ namespace Catan.Server.NetworkLayer
                     // Tcplistener wurde geschlossen. Durch Stop()
                     while (true) Console.ReadLine();  // Server läuft weiter ...
                 }
+                else
+                {
+                    iLogicLayer.ThrowException(socketEx);
+                }
             }
             catch (Exception ex)
             {
-
+                iLogicLayer.ThrowException(ex);
             }
         }
         private void NetMessageReader_CatanClientAuth_Request_ReadCompleted(object obj, NetworkMessageReaderReadCompletedEventArgs e)
@@ -85,13 +89,14 @@ namespace Catan.Server.NetworkLayer
                 catch (Exception ex)
                 {
                     e.TcpClient.Close();
+                    iLogicLayer.ThrowException(ex);
                 }
             }
         }
 
         private void NetMessageWriter_CatanClientAuth_Response_WriteCompleted(object obj, NetworkMessageWriterWriteCompletedEventArgs e)
         {
-            checkClientConnections(true);
+            getDisconnectedClientConnections(silently:true);
 
             // new catan client
             CatanClient catanClient = new CatanClient(e.TcpClient, e.TcpClient.Client.RemoteEndPoint.ToString(),(e.NetMessage as CatanClientAuthenticationResponseMessage).AuthRequestMessage.Playername);
@@ -112,7 +117,7 @@ namespace Catan.Server.NetworkLayer
 
                 }); // error handling wird ignoriert !!!
 
-                logicLayer.ServerFinishedListening(catanClients);
+                iLogicLayer.ServerFinishedListening(catanClients);
             }
         }
         #endregion
@@ -122,12 +127,11 @@ namespace Catan.Server.NetworkLayer
         {
             if (e.NetworkMessage is CatanClientStateChangeMessage)
             {
-                var gameState = e.NetworkMessage as CatanClientStateChangeMessage;
-                if (!catanClients.Exists(client=>client.ID==gameState.ClientID && client.IPAddressPortNr.Equals(e.TcpClient.Client.RemoteEndPoint.ToString())))
+                var gameStateMessage = e.NetworkMessage as CatanClientStateChangeMessage;
+                if (!catanClients.Exists(client=>client.ID==gameStateMessage.ClientID && client.IPAddressPortNr.Equals(e.TcpClient.Client.RemoteEndPoint.ToString())))
                 {
-
+                    iLogicLayer.ClientGameStateChangeMessageReceived(gameStateMessage);
                 }
-                logicLayer.ClientGameStateChangeMessageReceived(e.NetworkMessage as CatanClientStateChangeMessage);
             }
         }
         #endregion
@@ -137,27 +141,33 @@ namespace Catan.Server.NetworkLayer
         {
             try
             {
-                bool isDisconnected = (catanClient.TcpClient.Client.Poll(2, SelectMode.SelectRead) && catanClient.TcpClient.Client.Poll(2, SelectMode.SelectWrite) && !catanClient.TcpClient.Client.Poll(2, SelectMode.SelectError));
-
-                if (isDisconnected)
-                {
-                    Console.WriteLine($"{catanClient.Name} is disconnected !");
-                }
-                return !isDisconnected;
+                return !(catanClient.TcpClient.Client.Poll(50, SelectMode.SelectRead)      && 
+                         catanClient.TcpClient.Client.Poll(50, SelectMode.SelectWrite)     && 
+                        !catanClient.TcpClient.Client.Poll(50, SelectMode.SelectError));
             }
             catch (Exception ex)
             {
+                iLogicLayer.ThrowException(ex); 
                 return false;
             }
         }
      
-        private void checkClientConnections(bool silently = false)
+        private List<CatanClient> getDisconnectedClientConnections(bool silently = false)
         {
+            List<CatanClient> disconnectedClients = new List<CatanClient>();
             lock (catanClients)
             {
-                if (catanClients.RemoveAll(catanClient => !isCatanClientConnected(catanClient)) > 0 && !silently)
-                    throw new CatanClientDisconnectedException();
+                foreach (var catanClient in this.catanClients)
+                {
+                    if (!isCatanClientConnected(catanClient))
+                    {
+                        disconnectedClients.Add(catanClient);
+                    }
+                }
+                catanClients.RemoveAll(catanClient => 
+                disconnectedClients.Exists(disconnectedClient=>disconnectedClient==catanClient));
             }
+            return disconnectedClients;
         }
         #endregion
 
@@ -175,7 +185,7 @@ namespace Catan.Server.NetworkLayer
         {
             try
             {
-                checkClientConnections();
+                getDisconnectedClientConnections();
                 foreach (CatanClient catanClient in catanClients)
                 {
                     NetworkMessageWriter netMessageWriter = new NetworkMessageWriter(catanClient.TcpClient);
@@ -186,7 +196,7 @@ namespace Catan.Server.NetworkLayer
             }
             catch (CatanClientDisconnectedException ex)
             {
-
+                iLogicLayer.ClientDisconnected();
             }
             catch (Exception ex)
             {

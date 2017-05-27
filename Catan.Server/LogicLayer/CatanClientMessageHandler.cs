@@ -13,11 +13,11 @@ namespace Catan.Server.LogicLayer
         private CatanClient catanClient;
 
         public CatanClientMessageHandler()
-        {}
-        public void Handle(CatanClient catanClient,CatanClientStateChangeMessage catanClientStateChangeMessage)
+        { }
+        public void Handle(CatanClient catanClient, CatanClientStateChangeMessage catanClientStateChangeMessage)
         {
             this.catanClient = catanClient;
-            foreach (var newSpielFiguren in catanClientStateChangeMessage.NewSpielFiguren.Where(spielFigur=>spielFigur is Siedlung).ToList())
+            foreach (var newSpielFiguren in catanClientStateChangeMessage.NewSpielFiguren.Where(spielFigur => spielFigur is Siedlung).ToList())
             {
                 addNewSiedlung(newSpielFiguren as Siedlung);
             }
@@ -26,7 +26,7 @@ namespace Catan.Server.LogicLayer
             {
                 addNewStrasse(newSpielFiguren as Strasse);
             }
-         
+
             foreach (var newSpielFiguren in catanClientStateChangeMessage.NewSpielFiguren.Where(spielFigur => spielFigur is Stadt).ToList())
             {
                 addNewStadt(newSpielFiguren as Stadt);
