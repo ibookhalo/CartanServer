@@ -43,7 +43,6 @@
     <Compile Include="CatanClient.cs" />
     <Compile Include="HexagonEdge.cs" />
     <Compile Include="Hexagon.cs" />
-    <Compile Include="HexagonPositionHexagonEdge.cs" />
     <Compile Include="HexagonPoint.cs" />
     <Compile Include="HexagonPosition.cs" />
     <Compile Include="KartenContainer.cs" />
