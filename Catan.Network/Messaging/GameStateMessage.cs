@@ -12,13 +12,15 @@ namespace Catan.Network.Messaging
     {
         public List<CatanClient> Clients { private set; get; }
         public CatanClient CurrentClient { private set; get; }
+        public CatanClient Winner {private set; get; }
         public Hexagon[][] HexagoneFields { private set; get; }
 
-        public GameStateMessage(List<CatanClient> clients,CatanClient currentClient, Hexagon[][] hexagoneFields)
+        public GameStateMessage(List<CatanClient> clients,CatanClient currentClient,CatanClient winner, Hexagon[][] hexagoneFields)
         {
             this.Clients = clients;
             this.CurrentClient = currentClient;
             this.HexagoneFields = hexagoneFields;
+            this.Winner = winner;
         }
     }
 }

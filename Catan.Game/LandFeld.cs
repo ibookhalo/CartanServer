@@ -7,7 +7,7 @@ namespace Catan.Game
 {
     public static class LandFeld
     {
-        public enum LandfeldTyp { Weideland, Ackerland, BergwerkGold, Eisenmine, MeersFeld, Wohnstaette };
+       /*
         public static KartenContainer.Rohstoffkarte GetErtragByLandFeldTyp(LandfeldTyp typ)
         {
             switch (typ)
@@ -24,9 +24,12 @@ namespace Catan.Game
                     return KartenContainer.Rohstoffkarte.Wasser;
                 case LandfeldTyp.Wohnstaette:
                     return KartenContainer.Rohstoffkarte.Bewohner;
+                case LandfeldTyp.Wald:
+                    return KartenContainer.Rohstoffkarte.Holz;
                 default:
                     throw new NotImplementedException($"GetErtragByLandFeldTyp ({typ}) ");
             }
         }
+        */
     }
 }

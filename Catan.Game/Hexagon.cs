@@ -8,17 +8,18 @@ namespace Catan.Game
     [Serializable]
     public class Hexagon
     {
-        public LandFeld.LandfeldTyp LandfeldTyp { private set; get; }
+        public enum LandfeldTyp { Weideland, Ackerland, BergwerkGold, Eisenmine, MeersFeld, Wohnstaette, Wald };
+        public LandfeldTyp LandFeldTyp { private set; get; }
         public int Nr { private set; get; }
         public HexagonPosition Position { private set; get; }
         public List<HexagonPoint> Points { private set; get; }
         public List<HexagonEdge> Edges { private set; get; }
 
-        public Hexagon(HexagonPosition position, LandFeld.LandfeldTyp landfeldTyp,int nr,List<HexagonPoint> points)
+        public Hexagon(HexagonPosition position, Hexagon.LandfeldTyp landfeldTyp,int nr,List<HexagonPoint> points)
         {
             this.Position = position;
 
-            this.LandfeldTyp = landfeldTyp;
+            this.LandFeldTyp = landfeldTyp;
             this.Nr = nr;
             this.Points = points;
             

@@ -17,24 +17,30 @@ namespace Catan.Server.LogicLayer
         public void Handle(CatanClient catanClient, CatanClientStateChangeMessage catanClientStateChangeMessage)
         {
             this.catanClient = catanClient;
-            foreach (var newSpielFiguren in catanClientStateChangeMessage.NewSpielFiguren.Where(spielFigur => spielFigur is Siedlung).ToList())
+            if (catanClientStateChangeMessage.NewSpielFiguren !=null)
             {
-                addNewSiedlung(newSpielFiguren as Siedlung);
+                foreach (var newSpielFiguren in catanClientStateChangeMessage.NewSpielFiguren.Where(spielFigur => spielFigur is Siedlung).ToList())
+                {
+                    addNewSiedlung(newSpielFiguren as Siedlung);
+                }
+
+                foreach (var newSpielFiguren in catanClientStateChangeMessage.NewSpielFiguren.Where(spielFigur => spielFigur is Strasse).ToList())
+                {
+                    addNewStrasse(newSpielFiguren as Strasse);
+                }
+
+                foreach (var newSpielFiguren in catanClientStateChangeMessage.NewSpielFiguren.Where(spielFigur => spielFigur is Stadt).ToList())
+                {
+                    addNewStadt(newSpielFiguren as Stadt);
+                }
             }
 
-            foreach (var newSpielFiguren in catanClientStateChangeMessage.NewSpielFiguren.Where(spielFigur => spielFigur is Strasse).ToList())
+            if (catanClientStateChangeMessage.NewEntwicklungskarten!=null)
             {
-                addNewStrasse(newSpielFiguren as Strasse);
-            }
-
-            foreach (var newSpielFiguren in catanClientStateChangeMessage.NewSpielFiguren.Where(spielFigur => spielFigur is Stadt).ToList())
-            {
-                addNewStadt(newSpielFiguren as Stadt);
-            }
-
-            foreach (var newEntwicklungskarte in catanClientStateChangeMessage.NewEntwicklungskarten)
-            {
-                addNewEntwicklungskarte(newEntwicklungskarte);
+                foreach (var newEntwicklungskarte in catanClientStateChangeMessage.NewEntwicklungskarten)
+                {
+                    addNewEntwicklungskarte(newEntwicklungskarte);
+                }
             }
         }
 

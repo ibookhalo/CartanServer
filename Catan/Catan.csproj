@@ -51,6 +51,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Catan.Game\Catan.Game.csproj">
+      <Project>{53a8c042-1428-4da0-8b9e-1060ce04d386}</Project>
+      <Name>Catan.Game</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Catan.Network\Catan.Network.csproj">
+      <Project>{e1b4ff45-b346-43e0-ba82-2498641d7937}</Project>
+      <Name>Catan.Network</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Catan.Server\Catan.Server.csproj">
       <Project>{8a4e6a49-7cbc-4c46-8e9e-42d8daee9c64}</Project>
       <Name>Catan.Server</Name>

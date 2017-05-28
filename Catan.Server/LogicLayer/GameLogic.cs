@@ -17,14 +17,13 @@ namespace Catan.Server.LogicLayer
         private CatanClientMessageHandler messageHandler;
 
         private List<CatanClient> catanClients;
+        private const int MAX_SIEGPUNKTE_WINN = 15;
 
         public GameLogic()
         {
             this.catanClients = new List<CatanClient>();
-
             this.messageHandler = new LogicLayer.CatanClientMessageHandler();
         }
-
         private CatanClient getNextClient()
         {
             if (currentClient == null)
@@ -47,15 +46,27 @@ namespace Catan.Server.LogicLayer
 
             currentClient = getNextClient();
 
+            setAllowedSpielFigurenByClient(currentClient);
+           
+            foreach (var client in catanClients)
+            {
+                client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
+                client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
+                client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wolle);
+            }
+            
+            GameStateMessage gameState = new GameStateMessage(catanClients, currentClient,null, HexagonGrid.Instance.Hexagones);
+           
+            iNetworkLayer.SendBroadcastMessage(gameState);
+        }
+
+        private void setAllowedSpielFigurenByClient(CatanClient currentClient)
+        {
             currentClient.AllowedSiedlungen = getAllowedSiedlungenByClient(currentClient);
             currentClient.AllowedStaedte = getAllowedStaedteByClient(currentClient);
             currentClient.AllowedStrassen = getAllowedStrassenByClient(currentClient);
-
-            GameStateMessage gameState = new GameStateMessage(catanClients, currentClient, HexagonGrid.Instance.Hexagones);
-           
-
-            iNetworkLayer.SendBroadcastMessage(gameState);
         }
+
         private bool[][][] getAllowedStrassenByClient(CatanClient currentClient)
         {
             bool[][][] allowedStrassen = initilize3DBoolArrayBasedOnHexfields();
@@ -207,16 +218,34 @@ namespace Catan.Server.LogicLayer
         }
         public void ClientGameStateChangeMessageReceived(CatanClientStateChangeMessage catanClientStateChangeMessage)
         {
-            CatanClient catanClient = catanClients.Find(client => client.ID == catanClientStateChangeMessage.ClientID);
-            if (catanClient == null)
+            CatanClient receivedMessageCatanClient = catanClients.Find(client => client.ID == catanClientStateChangeMessage.ClientID);
+            if (receivedMessageCatanClient == null)
                 new NullReferenceException("ClientGameStateChangeMessageReceived");
 
-            this.messageHandler.Handle(catanClient,catanClientStateChangeMessage);
-        }
+            if (this.currentClient==receivedMessageCatanClient)
+            {
+                this.messageHandler.Handle(receivedMessageCatanClient, catanClientStateChangeMessage);
 
+                #region Gewinner gefunden? 
+
+                CatanClient winner = null;
+                if (receivedMessageCatanClient.Siegpunkte >= MAX_SIEGPUNKTE_WINN)
+                {
+                    winner = receivedMessageCatanClient;
+                }
+
+                #endregion
+
+                currentClient = getNextClient();
+                setAllowedSpielFigurenByClient(currentClient);
+
+                //iNetworkLayer.SendBroadcastMessage(new GameStateMessage(this.catanClients, currentClient, winner, null));
+
+            }
+        }
         public void ThrowException(Exception ex)
         {
-            
+            Console.WriteLine($"Exception: {ex.Message}");
         }
     }
 }

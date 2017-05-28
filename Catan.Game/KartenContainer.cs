@@ -8,7 +8,7 @@ namespace Catan.Game
     [Serializable]
     public class KartenContainer
     {
-        public enum Rohstoffkarte { Wolle, Getreide, Gold, Eisen, Wasser, Bewohner };
+        public enum Rohstoffkarte { Wolle, Getreide, Gold, Eisen, Wasser, Bewohner, Holz };
         public enum Entwicklungskarte { Siegpunkt }
 
         // Rohstoffkarten
@@ -18,6 +18,7 @@ namespace Catan.Game
         private int rohstoff_eisen;
         private int rohstoff_wasser;
         private int rohstoff_bewohner;
+        private int rohstoff_holz;
 
         // Entwicklungskarten
         private int entwicklung_siegpunkt;
@@ -68,6 +69,9 @@ namespace Catan.Game
                 case Rohstoffkarte.Bewohner:
                     rohstoff_bewohner++;
                     break;
+                case Rohstoffkarte.Holz:
+                    rohstoff_holz++;
+                    break;
                 default:
                     throw new NotImplementedException($"AddRohstoffkarte ({rohstoffkarte}) ");
             }
@@ -94,6 +98,9 @@ namespace Catan.Game
                 case Rohstoffkarte.Bewohner:
                     rohstoff_bewohner--;
                     break;
+                case Rohstoffkarte.Holz:
+                    rohstoff_holz--;
+                    break;
                 default:
                     throw new NotImplementedException($"RemoveRohstoffkarte ({rohstoffkarte}) ");
             }
@@ -115,6 +122,8 @@ namespace Catan.Game
                     return rohstoff_wasser;
                 case Rohstoffkarte.Bewohner:
                     return rohstoff_bewohner;
+                case Rohstoffkarte.Holz:
+                    return rohstoff_holz;
                 default:
                     throw new NotImplementedException($"GetAnzahlByRohstoff ({rohstoffkarte}) ");
             }

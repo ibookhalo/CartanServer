@@ -8,7 +8,7 @@ namespace Catan.Server.LogicLayer
 {
     public static class Bank
     {
-        public static void GetRohstoffkarte(KartenContainer rohstoffkarten, KartenContainer.Rohstoffkarte abgeben, KartenContainer.Rohstoffkarte nehmen)
+        public static void ExchangeRohstoffkarte(KartenContainer rohstoffkarten, KartenContainer.Rohstoffkarte abgeben, KartenContainer.Rohstoffkarte nehmen)
         {
             if (rohstoffkarten.GetAnzahlByRohstoffkarte(abgeben)>=4)
             {

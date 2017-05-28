@@ -43,36 +43,36 @@ namespace Catan.Server.LogicLayer
                 return instance;
             }
         }
-        private LandFeld.LandfeldTyp[] generateRandomHexagonFieldTyps()
+        private Hexagon.LandfeldTyp[] generateRandomHexagonFieldTyps()
         {
-            LandFeld.LandfeldTyp[] landFields =
+            Hexagon.LandfeldTyp[] landFields =
          {
-                LandFeld.LandfeldTyp.Weideland,
-                LandFeld.LandfeldTyp.Ackerland,
-                LandFeld.LandfeldTyp.BergwerkGold,
-                LandFeld.LandfeldTyp.Eisenmine,
-                LandFeld.LandfeldTyp.MeersFeld,
-                LandFeld.LandfeldTyp.Wohnstaette,
+                Hexagon.LandfeldTyp.Weideland,
+                Hexagon.LandfeldTyp.Ackerland,
+                Hexagon.LandfeldTyp.BergwerkGold,
+                Hexagon.LandfeldTyp.Eisenmine,
+                Hexagon.LandfeldTyp.MeersFeld,
+                Hexagon.LandfeldTyp.Wohnstaette,
 
-                LandFeld.LandfeldTyp.Weideland,
-                LandFeld.LandfeldTyp.Ackerland,
-                LandFeld.LandfeldTyp.BergwerkGold,
-                LandFeld.LandfeldTyp.Eisenmine,
-                LandFeld.LandfeldTyp.MeersFeld,
-                LandFeld.LandfeldTyp.Wohnstaette,
+                Hexagon.LandfeldTyp.Weideland,
+                Hexagon.LandfeldTyp.Ackerland,
+                Hexagon.LandfeldTyp.BergwerkGold,
+                Hexagon.LandfeldTyp.Eisenmine,
+                Hexagon.LandfeldTyp.MeersFeld,
+                Hexagon.LandfeldTyp.Wohnstaette,
 
-                LandFeld.LandfeldTyp.Weideland,
-                LandFeld.LandfeldTyp.Ackerland,
-                LandFeld.LandfeldTyp.Eisenmine,
-                LandFeld.LandfeldTyp.MeersFeld,
-                LandFeld.LandfeldTyp.Wohnstaette,
+                Hexagon.LandfeldTyp.Weideland,
+                Hexagon.LandfeldTyp.Ackerland,
+                Hexagon.LandfeldTyp.Eisenmine,
+                Hexagon.LandfeldTyp.MeersFeld,
+                Hexagon.LandfeldTyp.Wohnstaette,
 
-                LandFeld.LandfeldTyp.Weideland,
-                LandFeld.LandfeldTyp.Ackerland,
+                Hexagon.LandfeldTyp.Weideland,
+                Hexagon.LandfeldTyp.Ackerland,
             };
             Random rnd = new Random();
             List<int> landFieldsIndexes = new List<int>();
-            List<LandFeld.LandfeldTyp> randomLandFieldTypes = new List<LandFeld.LandfeldTyp>();
+            List<Hexagon.LandfeldTyp> randomLandFieldTypes = new List<Hexagon.LandfeldTyp>();
 
             int newRandomFieldTypIndex;
             while (true)
@@ -135,7 +135,7 @@ namespace Catan.Server.LogicLayer
         }
         private void generateHexagonGrid()
         {
-            LandFeld.LandfeldTyp[] randomHexagonFieldTypes = generateRandomHexagonFieldTyps();
+            Hexagon.LandfeldTyp[] randomHexagonFieldTypes = generateRandomHexagonFieldTyps();
             int[] nrChips = { 5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11, 1 };
 
 
