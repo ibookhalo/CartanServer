@@ -28,9 +28,6 @@ namespace Catan
             newSpielFiguren.Add(new Siedlung(new HexagonPosition(0, 0), new HexagonPoint(1)));
 
             logic.ClientGameStateChangeMessageReceived(new Network.Messaging.CatanClientStateChangeMessage(newSpielFiguren, null, null, clients[3].ID));
-
-
-
         }
     }
 }

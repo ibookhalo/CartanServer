@@ -59,14 +59,12 @@ namespace Catan.Server.LogicLayer
            
             iNetworkLayer.SendBroadcastMessage(gameState);
         }
-
         private void setAllowedSpielFigurenByClient(CatanClient currentClient)
         {
             currentClient.AllowedSiedlungen = getAllowedSiedlungenByClient(currentClient);
             currentClient.AllowedStaedte = getAllowedStaedteByClient(currentClient);
             currentClient.AllowedStrassen = getAllowedStrassenByClient(currentClient);
         }
-
         private bool[][][] getAllowedStrassenByClient(CatanClient currentClient)
         {
             bool[][][] allowedStrassen = initilize3DBoolArrayBasedOnHexfields();
