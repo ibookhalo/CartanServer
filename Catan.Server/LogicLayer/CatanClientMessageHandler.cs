@@ -66,11 +66,7 @@ namespace Catan.Server.LogicLayer
 
         private void addNewStadt(Stadt newStadt)
         {
-            if (catanClient.KartenContainer.GetAnzahlByRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen) >= 1 &&
-                           catanClient.KartenContainer.GetAnzahlByRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide) >= 1 &&
-                           catanClient.KartenContainer.GetAnzahlByRohstoffkarte(KartenContainer.Rohstoffkarte.Bewohner) >= 1 &&
-
-                           catanClient.AllowedSiedlungen[newStadt.HexagonPosition.RowIndex][newStadt.HexagonPosition.ColumnIndex][newStadt.HexagonPoint.Index])
+            if (BuildChecker.CanBuildStadt(catanClient.KartenContainer) && catanClient.AllowedSiedlungen[newStadt.HexagonPosition.RowIndex][newStadt.HexagonPosition.ColumnIndex][newStadt.HexagonPoint.Index])
             {
                 catanClient.KartenContainer.RemoveRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
                 catanClient.KartenContainer.RemoveRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
@@ -84,9 +80,7 @@ namespace Catan.Server.LogicLayer
 
         private void addNewStrasse(Strasse newStrasse)
         {
-            if (catanClient.KartenContainer.GetAnzahlByRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen) >= 1 &&
-                          catanClient.KartenContainer.GetAnzahlByRohstoffkarte(KartenContainer.Rohstoffkarte.Wasser) >= 1 &&
-                          catanClient.AllowedStrassen[newStrasse.HexagonPosition.RowIndex][newStrasse.HexagonPosition.ColumnIndex][newStrasse.HexagonEdge.Index])
+            if (BuildChecker.CanBuildStrasse(catanClient.KartenContainer) && catanClient.AllowedStrassen[newStrasse.HexagonPosition.RowIndex][newStrasse.HexagonPosition.ColumnIndex][newStrasse.HexagonEdge.Index])
             {
                 catanClient.KartenContainer.RemoveRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
                 catanClient.KartenContainer.RemoveRohstoffkarte(KartenContainer.Rohstoffkarte.Wasser);
@@ -97,11 +91,7 @@ namespace Catan.Server.LogicLayer
 
         private void addNewSiedlung(Siedlung newSiedlung)
         {
-            if (catanClient.KartenContainer.GetAnzahlByRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen) >= 1 &&
-                            catanClient.KartenContainer.GetAnzahlByRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide) >= 1 &&
-                            catanClient.KartenContainer.GetAnzahlByRohstoffkarte(KartenContainer.Rohstoffkarte.Wolle) >= 1 &&
-
-                            catanClient.AllowedSiedlungen[newSiedlung.HexagonPosition.RowIndex][newSiedlung.HexagonPosition.ColumnIndex][newSiedlung.HexagonPoint.Index])
+            if (BuildChecker.CanBuildSiedlung(catanClient.KartenContainer) && catanClient.AllowedSiedlungen[newSiedlung.HexagonPosition.RowIndex][newSiedlung.HexagonPosition.ColumnIndex][newSiedlung.HexagonPoint.Index])
             {
                 catanClient.KartenContainer.RemoveRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
                 catanClient.KartenContainer.RemoveRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);

@@ -18,6 +18,7 @@ namespace Catan.Server.LogicLayer
 
         private List<CatanClient> catanClients;
         private const int MAX_SIEGPUNKTE_WINN = 15;
+        private Color[] clientColors ={Color.Red,Color.Blue,Color.Green,Color.Yellow };
 
         public GameLogic()
         {
@@ -43,53 +44,84 @@ namespace Catan.Server.LogicLayer
             // Let clients play catan !
             this.catanClients.Clear();
             this.catanClients.AddRange(catanClients);
+            setClientsColor();
 
             currentClient = getNextClient();
 
+            // damit die Clients bei der ersten Runde eine Stadt und Strasse bauen können ...
+            catanClients.ForEach(client => initKartenContainerWithStartKarten(client));
+
             setAllowedSpielFigurenByClient(currentClient);
-           
-            foreach (var client in catanClients)
+
+            iNetworkLayer.SendBroadcastMessage(new GameStateMessage(catanClients, currentClient, null, HexagonGrid.Instance.Hexagones));
+        }
+
+        private void initKartenContainerWithStartKarten(CatanClient client)
+        {
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
+
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
+
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Bewohner);
+
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wasser);
+        }
+        private void setClientsColor()
+        {
+            if (catanClients.Count>clientColors.Length)
             {
-                client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
-                client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
-                client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wolle);
+                throw new IndexOutOfRangeException();
             }
-            
-            GameStateMessage gameState = new GameStateMessage(catanClients, currentClient,null, HexagonGrid.Instance.Hexagones);
-           
-            //iNetworkLayer.SendBroadcastMessage(gameState);
+
+            for (int clientîndex = 0; clientîndex < this.catanClients.Count; clientîndex++)
+            {
+                catanClients[clientîndex].Color = clientColors[clientîndex];
+            }
         }
         private void setAllowedSpielFigurenByClient(CatanClient currentClient)
         {
-            currentClient.AllowedSiedlungen = getAllowedSiedlungenByClient(currentClient);
-            currentClient.AllowedStaedte = getAllowedStaedteByClient(currentClient);
-            currentClient.AllowedStrassen = getAllowedStrassenByClient(currentClient);
+            if (BuildChecker.CanBuildSiedlung(currentClient.KartenContainer))
+            {
+                currentClient.AllowedSiedlungen = getAllowedSiedlungenByClient(currentClient);
+            }
+            if (BuildChecker.CanBuildStadt(currentClient.KartenContainer))
+            {
+                currentClient.AllowedStaedte = getAllowedStaedteByClient(currentClient);
+            }
+            if (BuildChecker.CanBuildStrasse(currentClient.KartenContainer))
+            {
+                currentClient.AllowedStrassen = getAllowedStrassenByClient(currentClient);
+            }
         }
-        private bool[][][] getAllowedStrassenByClient(CatanClient currentClient)
+        private bool[][][] getAllowedStrassenByClient(CatanClient client)
         {
-            bool[][][] allowedStrassen = initilize3DBoolArrayBasedOnHexfields();
+            if (client.AllowedStaedte == null)
+                return null;
 
+            bool[][][] allowedStrassen = initilize3DBoolArrayBasedOnHexfields();
             #region An den eigenen Siedlungen und Städten dürfen Straßen gebaut werden
 
             // Siedlungen
-            foreach (var siedlung in currentClient.SpielfigurenContainer.Siedlungen)
+            foreach (var siedlung in client.SpielfigurenContainer.Siedlungen)
             {
                 var hexPosEdges = HexagonGrid.GetHexagonEdgesByGridPoint(HexagonGrid.Instance.HexagonesList, HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint));
                 foreach (var hexPosEdge in hexPosEdges)
                 {
                     allowedStrassen[hexPosEdge.HexagonPosition.RowIndex][hexPosEdge.HexagonPosition.ColumnIndex][hexPosEdge.HexagonEdge.Index] =
-                    currentClient.SpielfigurenContainer.Strassen.Find(strasse => 
+                    client.SpielfigurenContainer.Strassen.Find(strasse => 
                     HexagonGrid.IsHexagonEdgeOnHexagonEdge(hexPosEdge, new HexagonPositionHexagonEdge(strasse.HexagonPosition, strasse.HexagonEdge))) == null;
                 }
             }
             // Städte
-            foreach (var stadt in currentClient.SpielfigurenContainer.Staedte)
+            foreach (var stadt in client.SpielfigurenContainer.Staedte)
             {
                 var hexPosEdges = HexagonGrid.GetHexagonEdgesByGridPoint(HexagonGrid.Instance.HexagonesList, HexagonGrid.GetGridPointByHexagonPositionAndPoint(stadt.HexagonPosition, stadt.HexagonPoint));
                 foreach (var hexPosEdge in hexPosEdges)
                 {
                     allowedStrassen[hexPosEdge.HexagonPosition.RowIndex][hexPosEdge.HexagonPosition.ColumnIndex][hexPosEdge.HexagonEdge.Index] =
-                    currentClient.SpielfigurenContainer.Strassen.Find(strasse =>
+                    client.SpielfigurenContainer.Strassen.Find(strasse =>
                     HexagonGrid.IsHexagonEdgeOnHexagonEdge(hexPosEdge, new HexagonPositionHexagonEdge(strasse.HexagonPosition, strasse.HexagonEdge))) == null;
                 }
             }
@@ -98,7 +130,7 @@ namespace Catan.Server.LogicLayer
 
             #region An den eigenen Straßen dürfen Straßen gebaut werden und auf der keine fremde Siedlung oder Stadt steht
 
-            foreach (var strasse in currentClient.SpielfigurenContainer.Strassen)
+            foreach (var strasse in client.SpielfigurenContainer.Strassen)
             {
 
                 var gridPointA = HexagonGrid.GetGridPointByHexagonPositionAndPoint(strasse.HexagonPosition, strasse.HexagonEdge.PointA);
@@ -120,16 +152,16 @@ namespace Catan.Server.LogicLayer
 
             return allowedStrassen;
         }
-        private bool[][][] getAllowedStaedteByClient(CatanClient currentClient)
+        private bool[][][] getAllowedStaedteByClient(CatanClient client)
         {
             var allowedStaedte = initilize3DBoolArrayBasedOnHexfields();
 
-            foreach (var siedlung in currentClient.SpielfigurenContainer.Siedlungen)
+            foreach (var siedlung in client.SpielfigurenContainer.Siedlungen)
             {
                 var gridPoint = HexagonGrid.GetGridPointByHexagonPositionAndPoint(siedlung.HexagonPosition, siedlung.HexagonPoint);
                 foreach (var hexPosEdge in HexagonGrid.GetHexagonEdgesByGridPoint(HexagonGrid.GetHexagonesByGridPoint(gridPoint), gridPoint))
                 {
-                    if (currentClient.SpielfigurenContainer.Strassen.Find(strasse =>
+                    if (client.SpielfigurenContainer.Strassen.Find(strasse =>
                         HexagonGrid.IsHexagonEdgeOnHexagonEdge(hexPosEdge, new HexagonPositionHexagonEdge(strasse.HexagonPosition, strasse.HexagonEdge))) != null)
                     {
                         allowedStaedte[siedlung.HexagonPosition.RowIndex][siedlung.HexagonPosition.ColumnIndex][siedlung.HexagonPoint.Index] = true;
@@ -158,6 +190,9 @@ namespace Catan.Server.LogicLayer
         }
         private bool[][][] getAllowedSiedlungenByClient(CatanClient client)
         {
+            if (client.AllowedStaedte == null)
+                return null;
+
             bool[][][] allowedSiedlungen = initilize3DBoolArrayBasedOnHexfields();
 
             for (int rowIndex = 0; rowIndex < allowedSiedlungen.GetLength(0); rowIndex++)

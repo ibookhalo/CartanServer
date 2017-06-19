@@ -26,7 +26,7 @@ namespace Catan.Game
         // Karten
         public KartenContainer KartenContainer { private set; get; }
 
-        public Color Color { private set; get; }
+        public Color Color { set; get; }
 
         public string Name { private set; get; }
         public int ID { private set; get; }
