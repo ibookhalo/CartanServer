@@ -57,7 +57,7 @@ namespace Catan.Server.LogicLayer
             
             GameStateMessage gameState = new GameStateMessage(catanClients, currentClient,null, HexagonGrid.Instance.Hexagones);
            
-            iNetworkLayer.SendBroadcastMessage(gameState);
+            //iNetworkLayer.SendBroadcastMessage(gameState);
         }
 
         private void setAllowedSpielFigurenByClient(CatanClient currentClient)
@@ -237,9 +237,9 @@ namespace Catan.Server.LogicLayer
                 #endregion
 
                 currentClient = getNextClient();
-                setAllowedSpielFigurenByClient(currentClient);
+                catanClients.ForEach(cl => setAllowedSpielFigurenByClient(cl));
 
-                //iNetworkLayer.SendBroadcastMessage(new GameStateMessage(this.catanClients, currentClient, winner, null));
+               iNetworkLayer.SendBroadcastMessage(new GameStateMessage(this.catanClients, currentClient, winner, null));
 
             }
         }
