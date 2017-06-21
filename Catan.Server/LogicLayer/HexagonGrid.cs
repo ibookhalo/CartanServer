@@ -203,5 +203,28 @@ namespace Catan.Server.LogicLayer
                    HexagonGrid.GetGridPointByHexagonPositionAndPoint(hexagonPosition, hexagonEdge.PointB).Equals(gridPoint);
 
         }
+
+        public static List<HexagonPositionHexagonPoint> GetHexagonAndHexagonPointByGridPoint(GridPoint gridPoint)
+        {
+            List<HexagonPositionHexagonPoint> hexPositionHexagonPoint = new List<HexagonPositionHexagonPoint>();
+
+            foreach (var hexagonEdge in GetHexagonEdgesByGridPoint(Instance.HexagonesList, gridPoint))
+            {
+                GridPoint _gridPoint;
+
+                _gridPoint =GetGridPointByHexagonPositionAndPoint(hexagonEdge.HexagonPosition, hexagonEdge.HexagonEdge.PointA);
+                if (_gridPoint.Equals(gridPoint))
+                {
+                    hexPositionHexagonPoint.Add(new LogicLayer.HexagonPositionHexagonPoint(hexagonEdge.HexagonPosition,hexagonEdge.HexagonEdge.PointA));
+                }
+
+                _gridPoint = GetGridPointByHexagonPositionAndPoint(hexagonEdge.HexagonPosition, hexagonEdge.HexagonEdge.PointB);
+                if (_gridPoint.Equals(gridPoint))
+                {
+                    hexPositionHexagonPoint.Add(new LogicLayer.HexagonPositionHexagonPoint(hexagonEdge.HexagonPosition, hexagonEdge.HexagonEdge.PointB));
+                }
+            }
+            return hexPositionHexagonPoint;
+        }
     }
 }

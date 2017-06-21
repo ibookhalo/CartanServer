@@ -51,6 +51,7 @@ namespace Catan.Server.LogicLayer
             // damit die Clients bei der ersten Runde eine Stadt und Strasse bauen können ...
             catanClients.ForEach(client => initKartenContainerWithStartKarten(client));
 
+            clearAllowedSpielFigurenByClients();
             setAllowedSpielFigurenByClient(currentClient);
 
             iNetworkLayer.SendBroadcastMessage(new GameStateMessage(catanClients, currentClient, null, HexagonGrid.Instance.Hexagones));
@@ -62,9 +63,9 @@ namespace Catan.Server.LogicLayer
             client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
 
             client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
-            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
+       
 
-            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Bewohner);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wolle);
 
             client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wasser);
         }
@@ -80,19 +81,23 @@ namespace Catan.Server.LogicLayer
                 catanClients[clientîndex].Color = clientColors[clientîndex];
             }
         }
-        private void setAllowedSpielFigurenByClient(CatanClient currentClient)
+        private void clearAllowedSpielFigurenByClients()
         {
-            if (BuildChecker.CanBuildSiedlung(currentClient.KartenContainer))
+            this.catanClients.ForEach(client => client.AllowedSiedlungen = client.AllowedStaedte = client.AllowedStrassen = null;);
+        }
+        private void setAllowedSpielFigurenByClient(CatanClient client)
+        {
+            if (BuildChecker.CanBuildSiedlung(client.KartenContainer))
             {
-                currentClient.AllowedSiedlungen = getAllowedSiedlungenByClient(currentClient);
+                client.AllowedSiedlungen = getAllowedSiedlungenByClient(client);
             }
-            if (BuildChecker.CanBuildStadt(currentClient.KartenContainer))
+            if (BuildChecker.CanBuildStadt(client.KartenContainer))
             {
-                currentClient.AllowedStaedte = getAllowedStaedteByClient(currentClient);
+                client.AllowedStaedte = getAllowedStaedteByClient(client);
             }
-            if (BuildChecker.CanBuildStrasse(currentClient.KartenContainer))
+            if (BuildChecker.CanBuildStrasse(client.KartenContainer))
             {
-                currentClient.AllowedStrassen = getAllowedStrassenByClient(currentClient);
+                client.AllowedStrassen = getAllowedStrassenByClient(client);
             }
         }
         private bool[][][] getAllowedStrassenByClient(CatanClient client)
@@ -139,7 +144,7 @@ namespace Catan.Server.LogicLayer
                 foreach (var allowedGridPoint in new List<GridPoint>() {gridPointA,gridPointB })
                 {
                     foreach (var allowedHexagonEdge in HexagonGrid.GetHexagonEdgesByGridPoint(HexagonGrid.Instance.HexagonesList, allowedGridPoint).Where(hexPosEdge =>
-                              catanClients.Find(client => client.SpielfigurenContainer.Strassen.Find(_strasse =>
+                              catanClients.Find(_client => _client.SpielfigurenContainer.Strassen.Find(_strasse =>
                               HexagonGrid.IsHexagonEdgeOnHexagonEdge(hexPosEdge, new HexagonPositionHexagonEdge(_strasse.HexagonPosition, _strasse.HexagonEdge))) != null) == null).ToList())
 
                     {
@@ -154,6 +159,9 @@ namespace Catan.Server.LogicLayer
         }
         private bool[][][] getAllowedStaedteByClient(CatanClient client)
         {
+            if (client.SpielfigurenContainer.Siedlungen == null)
+                return null;
+
             var allowedStaedte = initilize3DBoolArrayBasedOnHexfields();
 
             foreach (var siedlung in client.SpielfigurenContainer.Siedlungen)
@@ -190,9 +198,6 @@ namespace Catan.Server.LogicLayer
         }
         private bool[][][] getAllowedSiedlungenByClient(CatanClient client)
         {
-            if (client.AllowedStaedte == null)
-                return null;
-
             bool[][][] allowedSiedlungen = initilize3DBoolArrayBasedOnHexfields();
 
             for (int rowIndex = 0; rowIndex < allowedSiedlungen.GetLength(0); rowIndex++)
@@ -206,6 +211,14 @@ namespace Catan.Server.LogicLayer
                         var foundHexagones = HexagonGrid.GetHexagonesByGridPoint(currentGridPoint);
                         if (foundHexagones.Count >= 2)
                         {
+                            #region Überprüfen, ob es schon eine Siedlung an diesem GridPoint angelegt wurde, wenn ja, dann ignorieren
+
+                            var hexPositionAndHexPoint =HexagonGrid.GetHexagonAndHexagonPointByGridPoint(currentGridPoint);
+                            if (hexPositionAndHexPoint.Exists(hexPosHexPoint=> allowedSiedlungen[hexPosHexPoint.HexagonPosition.RowIndex][hexPosHexPoint.HexagonPosition.ColumnIndex][hexPosHexPoint.Point.Index]))
+                                continue;
+
+                            #endregion
+
                             #region Überprüfen, ob es hier eine Stadt oder Siedlung gibt
 
                             var stadtGefunden = catanClients.Exists(_client => _client.SpielfigurenContainer.Staedte.Find(
@@ -270,7 +283,9 @@ namespace Catan.Server.LogicLayer
                 #endregion
 
                 currentClient = getNextClient();
-                catanClients.ForEach(cl => setAllowedSpielFigurenByClient(cl));
+
+                clearAllowedSpielFigurenByClients();
+                setAllowedSpielFigurenByClient(currentClient);
 
                iNetworkLayer.SendBroadcastMessage(new GameStateMessage(this.catanClients, currentClient, winner, null));
 

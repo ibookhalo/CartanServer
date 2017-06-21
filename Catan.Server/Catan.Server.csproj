@@ -49,6 +49,7 @@
     <Compile Include="LogicLayer\GridPoint.cs" />
     <Compile Include="LogicLayer\HexagonGrid.cs" />
     <Compile Include="LogicLayer\HexagonPositionHexagonEdge.cs" />
+    <Compile Include="LogicLayer\HexagonPositionHexagonPoint.cs" />
     <Compile Include="NetworkLayer\CatanClientDisconnectedException.cs" />
     <Compile Include="NetworkLayer\CatanServer.cs" />
     <Compile Include="LogicLayer\GameLogic.cs" />

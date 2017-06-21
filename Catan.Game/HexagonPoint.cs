@@ -13,7 +13,10 @@ namespace Catan.Game
         {
             this.Index = index;
         }
-
+        public bool Equals(HexagonPoint hexagonPoint)
+        {
+            return this.Index == hexagonPoint.Index;
+        }
         public override string ToString() => $"PointIndex: {Index}";
     }
 }
