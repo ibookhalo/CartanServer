@@ -83,7 +83,7 @@ namespace Catan.Server.LogicLayer
         }
         private void clearAllowedSpielFigurenByClients()
         {
-            this.catanClients.ForEach(client => client.AllowedSiedlungen = client.AllowedStaedte = client.AllowedStrassen = null;);
+            this.catanClients.ForEach(client => client.AllowedSiedlungen = client.AllowedStaedte = client.AllowedStrassen = null);
         }
         private void setAllowedSpielFigurenByClient(CatanClient client)
         {

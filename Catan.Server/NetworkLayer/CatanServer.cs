@@ -128,7 +128,7 @@ namespace Catan.Server.NetworkLayer
             if (e.NetworkMessage is CatanClientStateChangeMessage)
             {
                 var gameStateMessage = e.NetworkMessage as CatanClientStateChangeMessage;
-                if (!catanClients.Exists(client=>client.ID==gameStateMessage.ClientID && client.IPAddressPortNr.Equals(e.TcpClient.Client.RemoteEndPoint.ToString())))
+                if (catanClients.Exists(client=>client.ID==gameStateMessage.ClientID && client.IPAddressPortNr.Equals(e.TcpClient.Client.RemoteEndPoint.ToString())))
                 {
                     iLogicLayer.ClientGameStateChangeMessageReceived(gameStateMessage);
                 }
