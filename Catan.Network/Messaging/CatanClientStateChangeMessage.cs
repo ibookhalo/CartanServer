@@ -11,13 +11,15 @@ namespace Catan.Network.Messaging
         public List<Bankhandle> NewBankhandles { private set; get; }
         public List<KartenContainer.Entwicklungskarte> NewEntwicklungskarten { private set; get; }
         public int ClientID { get;private set; }
+        public bool IsTurnDone { get; private set; }
 
-        public CatanClientStateChangeMessage(List<SpielFigur> newSpielFiguren,List<KartenContainer.Entwicklungskarte> newEntwicklungskarten, List<Bankhandle> bankhandles,int clientID)
+        public CatanClientStateChangeMessage(List<SpielFigur> newSpielFiguren,List<KartenContainer.Entwicklungskarte> newEntwicklungskarten, List<Bankhandle> bankhandles,int clientID,bool turnDone)
         {
             this.NewSpielFiguren = newSpielFiguren;
             this.NewBankhandles = bankhandles;
             this.NewEntwicklungskarten = newEntwicklungskarten;
             this.ClientID = clientID;
+            this.IsTurnDone = turnDone;
         }
         
         [Serializable]

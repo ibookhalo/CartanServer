@@ -102,7 +102,7 @@ namespace Catan.Server.LogicLayer
         }
         private bool[][][] getAllowedStrassenByClient(CatanClient client)
         {
-            if (client.AllowedStaedte == null)
+            if (client.SpielfigurenContainer.Siedlungen?.Count<=0)
                 return null;
 
             bool[][][] allowedStrassen = initilize3DBoolArrayBasedOnHexfields();
@@ -159,7 +159,7 @@ namespace Catan.Server.LogicLayer
         }
         private bool[][][] getAllowedStaedteByClient(CatanClient client)
         {
-            if (client.SpielfigurenContainer.Siedlungen == null)
+            if (client.SpielfigurenContainer.Siedlungen?.Count<=0)
                 return null;
 
             var allowedStaedte = initilize3DBoolArrayBasedOnHexfields();
@@ -259,7 +259,7 @@ namespace Catan.Server.LogicLayer
         }
         public void StartServer()
         {
-            this.iNetworkLayer = new NetworkLayer.CatanServer(1, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 123), "ibo", this);
+            this.iNetworkLayer = new NetworkLayer.CatanServer(2, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 123), "ibo", this);
             this.iNetworkLayer.StartTcpListener();
         }
         public void ClientGameStateChangeMessageReceived(CatanClientStateChangeMessage catanClientStateChangeMessage)
@@ -282,13 +282,13 @@ namespace Catan.Server.LogicLayer
 
                 #endregion
 
-                currentClient = getNextClient();
+                if (catanClientStateChangeMessage.IsTurnDone)
+                    currentClient = getNextClient();
 
                 clearAllowedSpielFigurenByClients();
                 setAllowedSpielFigurenByClient(currentClient);
 
                iNetworkLayer.SendBroadcastMessage(new GameStateMessage(this.catanClients, currentClient, winner, null));
-
             }
         }
         public void ThrowException(Exception ex)
