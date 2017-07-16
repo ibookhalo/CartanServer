@@ -7,21 +7,29 @@ using Catan.Game;
 using Catan.Network.Messaging;
 using System.Net;
 using System.Drawing;
+using Catan.Server.PersistenceLayer;
+using System.Xml.Serialization;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace Catan.Server.LogicLayer
 {
     public class GameLogic : Interfaces.ILogicLayer
     {
         private Interfaces.INetworkLayer iNetworkLayer;
+        private Interfaces.IPersistenceLayer iPersistenceLayer;
+
         private CatanClient currentClient;
         private CatanClientMessageHandler messageHandler;
+        private bool previousTurnDone ;
 
         private List<CatanClient> catanClients;
-        private const int MAX_SIEGPUNKTE_WINN = 15;
+        private const int MAX_SIEGPUNKTE_WINN = 5;
         private Color[] clientColors ={Color.Red,Color.Blue,Color.Green,Color.Yellow };
 
         public GameLogic()
         {
+            this.iPersistenceLayer = new PersistenceManager();
             this.catanClients = new List<CatanClient>();
             this.messageHandler = new LogicLayer.CatanClientMessageHandler();
         }
@@ -61,13 +69,24 @@ namespace Catan.Server.LogicLayer
         {
             client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
             client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Eisen);
 
             client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
-       
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
 
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wolle);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wolle);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wolle);
             client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wolle);
 
             client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wasser);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wasser);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wasser);
+            client.KartenContainer.AddRohstoffkarte(KartenContainer.Rohstoffkarte.Wasser);
+
         }
         private void setClientsColor()
         {
@@ -259,17 +278,19 @@ namespace Catan.Server.LogicLayer
         }
         public void StartServer()
         {
-            this.iNetworkLayer = new NetworkLayer.CatanServer(2, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 123), "ibo", this);
+            this.iNetworkLayer = new NetworkLayer.CatanServer(3, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234), "ibo", this);
             this.iNetworkLayer.StartTcpListener();
         }
+        /*
         public void ClientGameStateChangeMessageReceived(CatanClientStateChangeMessage catanClientStateChangeMessage)
         {
             CatanClient receivedMessageCatanClient = catanClients.Find(client => client.ID == catanClientStateChangeMessage.ClientID);
             if (receivedMessageCatanClient == null)
                 new NullReferenceException("ClientGameStateChangeMessageReceived");
 
-            if (this.currentClient==receivedMessageCatanClient)
+            if (this.currentClient == receivedMessageCatanClient)
             {
+                //modifyCatanClientStateMessageIfNecessary(catanClientStateChangeMessage);
                 this.messageHandler.Handle(receivedMessageCatanClient, catanClientStateChangeMessage);
 
                 #region Gewinner gefunden? 
@@ -279,21 +300,136 @@ namespace Catan.Server.LogicLayer
                 {
                     winner = receivedMessageCatanClient;
                 }
+                else
+                {
+                    currentClient = getNextClient();
+                    clearAllowedSpielFigurenByClients();
+                    setAllowedSpielFigurenByClient(currentClient);
+                }
 
                 #endregion
+                
+                iNetworkLayer.SendBroadcastMessage(new GameStateMessage(this.catanClients, currentClient, winner, null));
+            }
+        }*/
+
+        public void ClientGameStateChangeMessageReceived(CatanClientStateChangeMessage catanClientStateChangeMessage)
+        {
+            CatanClient receivedMessageCatanClient = catanClients.Find(client => client.ID == catanClientStateChangeMessage.ClientID);
+            if (receivedMessageCatanClient == null)
+                new NullReferenceException("ClientGameStateChangeMessageReceived");
+            
+            if (this.currentClient==receivedMessageCatanClient)
+            {
+                modifyCatanClientStateMessageIfNecessary(catanClientStateChangeMessage);
+                this.messageHandler.Handle(receivedMessageCatanClient, catanClientStateChangeMessage);
+                CatanClient winner = null;
+
+
+                // Neue Karten verdient?
+                int newStrassen = catanClientStateChangeMessage.NewSpielFiguren != null ? catanClientStateChangeMessage.NewSpielFiguren.Where(sf => sf is Strasse).ToList().Count : 0;
+                int newSiedlung = catanClientStateChangeMessage.NewSpielFiguren != null ? catanClientStateChangeMessage.NewSpielFiguren.Where(sf => sf is Siedlung).ToList().Count : 0;
+
 
                 if (catanClientStateChangeMessage.IsTurnDone)
+                {
+                    #region Gewinner gefunden? 
+                    
+                    if (receivedMessageCatanClient.Siegpunkte >= MAX_SIEGPUNKTE_WINN)
+                    {
+                        winner = receivedMessageCatanClient;
+                    }
+
+                    #endregion
+
                     currentClient = getNextClient();
+                    previousTurnDone = true;
+                }
 
                 clearAllowedSpielFigurenByClients();
                 setAllowedSpielFigurenByClient(currentClient);
 
                iNetworkLayer.SendBroadcastMessage(new GameStateMessage(this.catanClients, currentClient, winner, null));
+
+                //catanClients.ForEach(cclient => addNewKartenByNewStrassenNewSiedlungen(cclient,0, newSiedlung));
+
+                if (catanClientStateChangeMessage.IsTurnDone && previousTurnDone)
+                {
+                    // Neue Karten verdient?
+                    catanClients.ForEach(cclient => addNewKartenByClient(cclient));
+                    previousTurnDone = false;
+                }
             }
         }
+
+        private void addNewKartenByNewStrassenNewSiedlungen(CatanClient cclient,int newStrassen, int newSiedlung)
+        {
+            if (newStrassen >= 2)
+            {
+                cclient.Siegpunkte += 1;
+            }
+            if (newSiedlung >= 1)
+            {
+                cclient.Siegpunkte += 1;
+            }
+        }
+
+        private void modifyCatanClientStateMessageIfNecessary(CatanClientStateChangeMessage catanClientStateChangeMessage)
+        {
+            if (catanClientStateChangeMessage.NewSpielFiguren?.Count>0)
+            {
+                foreach (var strasse in (catanClientStateChangeMessage.NewSpielFiguren.Where(spielFigur => spielFigur is Strasse).ToList()))
+                {
+                    Strasse foundStrasse = strasse as Strasse;
+                    foundStrasse.HexagonEdge = HexagonGrid.Instance.Hexagones[strasse.HexagonPosition.RowIndex][strasse.HexagonPosition.ColumnIndex].Edges[foundStrasse.HexagonEdge.Index];
+                }
+            }
+        }
+
+        private void addNewKartenByClient(CatanClient cclient)
+        {
+            foreach (var strasse in cclient.SpielfigurenContainer.Strassen)
+            {
+                var foundHexagons = new List<Hexagon>();
+                List<Hexagon> tempHexagons;
+                tempHexagons = HexagonGrid.GetHexagonesByGridPoint(HexagonGrid.GetGridPointByHexagonPositionAndPoint(strasse.HexagonPosition, strasse.HexagonEdge.PointA));
+                foreach (var tempHex in tempHexagons)
+                {
+                    if (!foundHexagons.Exists(hex=>hex.Position.Equals(tempHex.Position)))
+                    {
+                        foundHexagons.Add(tempHex);
+                    }
+                }
+                tempHexagons=HexagonGrid.GetHexagonesByGridPoint(HexagonGrid.GetGridPointByHexagonPositionAndPoint(strasse.HexagonPosition, strasse.HexagonEdge.PointB));
+
+                foreach (var tempHex in tempHexagons)
+                {
+                    if (!foundHexagons.Exists(hex => hex.Position.Equals(tempHex.Position)))
+                    {
+                        foundHexagons.Add(tempHex);
+                    }
+                }
+
+                // checking edges
+                foreach (var hex in foundHexagons)
+                {
+                    foreach (var edge in hex.Edges)
+                    {
+                        if (HexagonGrid.IsHexagonEdgeOnHexagonEdge(new HexagonPositionHexagonEdge(hex.Position, edge), new HexagonPositionHexagonEdge(strasse.HexagonPosition, strasse.HexagonEdge)))
+                            cclient.KartenContainer.AddRohstoffkarte(Game.LandFeld.GetErtragByLandFeldTyp(hex.LandFeldTyp)); // matched hex
+                    }
+                }
+            }
+        }
+
         public void ThrowException(Exception ex)
         {
             Console.WriteLine($"Exception: {ex.Message}");
+        }
+
+        public bool IsAuthenticationRequestMessageOk(CatanClientAuthenticationRequestMessage authMessage)
+        {
+            return this.iPersistenceLayer.ExistPlayer(authMessage.MailAddress, authMessage.Password);
         }
     }
 }

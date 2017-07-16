@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static Catan.Game.Hexagon;
 
 namespace Catan.Game
 {
     public static class LandFeld
     {
-       /*
-        public static KartenContainer.Rohstoffkarte GetErtragByLandFeldTyp(LandfeldTyp typ)
+        public static KartenContainer.Rohstoffkarte GetErtragByLandFeldTyp(Hexagon.LandfeldTyp typ)
         {
             switch (typ)
             {
@@ -30,6 +30,5 @@ namespace Catan.Game
                     throw new NotImplementedException($"GetErtragByLandFeldTyp ({typ}) ");
             }
         }
-        */
     }
 }

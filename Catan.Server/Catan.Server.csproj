@@ -30,6 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.50.2\lib\net451\Dapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -43,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Interfaces\ILogicLayer.cs" />
     <Compile Include="Interfaces\INetworkLayer.cs" />
+    <Compile Include="Interfaces\IPersistenceLayer.cs" />
     <Compile Include="LogicLayer\Bank.cs" />
     <Compile Include="LogicLayer\BuildChecker.cs" />
     <Compile Include="LogicLayer\CatanClientMessageHandler.cs" />
@@ -53,9 +62,12 @@
     <Compile Include="NetworkLayer\CatanClientDisconnectedException.cs" />
     <Compile Include="NetworkLayer\CatanServer.cs" />
     <Compile Include="LogicLayer\GameLogic.cs" />
+    <Compile Include="PersistenceLayer\IPlayer.cs" />
+    <Compile Include="PersistenceLayer\PersistenceManager.cs" />
+    <Compile Include="PersistenceLayer\Player.cs" />
+    <Compile Include="PersistenceLayer\PlayerModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Catan.Game\Catan.Game.csproj">
       <Project>{53a8c042-1428-4da0-8b9e-1060ce04d386}</Project>
@@ -65,6 +77,10 @@
       <Project>{e1b4ff45-b346-43e0-ba82-2498641d7937}</Project>
       <Name>Catan.Network</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

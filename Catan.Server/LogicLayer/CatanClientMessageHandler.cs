@@ -97,7 +97,7 @@ namespace Catan.Server.LogicLayer
                 catanClient.KartenContainer.RemoveRohstoffkarte(KartenContainer.Rohstoffkarte.Getreide);
                 catanClient.KartenContainer.RemoveRohstoffkarte(KartenContainer.Rohstoffkarte.Wolle);
 
-                catanClient.Siegpunkte += 2;
+                catanClient.Siegpunkte ++;
 
                 catanClient.SpielfigurenContainer.Siedlungen.Add(newSiedlung);
             }

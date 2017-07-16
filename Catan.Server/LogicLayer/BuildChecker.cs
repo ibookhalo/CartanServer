@@ -25,7 +25,7 @@ namespace Catan.Server.LogicLayer
         {
             return kartenContainer.GetAnzahlByRohstoffkarte(Game.KartenContainer.Rohstoffkarte.Eisen) >= 1 &&
                             kartenContainer.GetAnzahlByRohstoffkarte(Game.KartenContainer.Rohstoffkarte.Getreide) >= 1 &&
-                            kartenContainer.GetAnzahlByRohstoffkarte(Game.KartenContainer.Rohstoffkarte.Wolle) >= 1;
+                            kartenContainer.GetAnzahlByRohstoffkarte(Game.KartenContainer.Rohstoffkarte.Wasser) >= 1;
         }
     }
 }
